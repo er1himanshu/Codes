@@ -1,0 +1,1731 @@
+# Sample workflow for building and deploying a Jekyll site to GitHub Pages
+name: Deploy Jekyll with GitHub Pages dependencies preinstalled
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+  # Deployment job<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StudyTube Pro - DSA Learning Platform</title>
+  <style>
+    :root {
+      --bg: #0f1220;
+      --panel: #171a2a;
+      --muted: #8892b0;
+      --text: #e6e8f3;
+      --accent: #7aa2f7;
+      --accent2: #00d3a7;
+      --danger: #ff6b6b;
+      --warning: #fbbf24;
+      --success: #10b981;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --glow: 0 0 20px rgba(122, 162, 247, 0.3);
+    }
+    
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --muted: #64748b;
+      --text: #1e293b;
+      --accent: #3b82f6;
+      --accent2: #059669;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --success: #059669;
+      --shadow: 0 10px 30px rgba(0,0,0,.1);
+      --glow: 0 0 20px rgba(59, 130, 246, 0.2);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, var(--bg), #0b0e1a);
+      color: var(--text);
+      font: 14px/1.4 'Segoe UI', system-ui, -apple-system, sans-serif;
+      transition: all 0.3s ease;
+    }
+    
+    [data-theme="light"] body {
+      background: linear-gradient(180deg, var(--bg), #e2e8f0);
+    }
+
+    .wrap {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 20px;
+      padding: 20px;
+      max-width: 1600px;
+      margin: auto;
+      min-height: 100vh;
+    }
+
+    /* Animations */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .animate-in { animation: slideIn 0.5s ease; }
+
+    /* Header */
+    header {
+      grid-column: 1/-1;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--panel);
+      padding: 20px 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 800;
+      background: linear-gradient(45deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: rgba(12, 16, 32, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid #222741;
+      color: var(--text);
+      padding: 10px 16px;
+      border-radius: 999px;
+      transition: all 0.3s ease;
+    }
+    
+    .pill:hover {
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+    }
+
+    .pill input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      min-width: 180px;
+    }
+
+    .pill button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .pill button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(122, 162, 247, 0.4);
+    }
+
+    .pill button.secondary {
+      background: #222741;
+      color: var(--text);
+    }
+
+    .theme-toggle {
+      background: var(--accent);
+      border: none;
+      color: white;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .theme-toggle:hover {
+      transform: rotate(180deg);
+      box-shadow: var(--glow);
+    }
+
+    /* Clock Section */
+    .clock-section {
+      background: var(--panel);
+      border: 1px solid #222741;
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .digital-clock {
+      font-size: 2.5em;
+      font-weight: 800;
+      color: var(--accent);
+      font-family: 'Courier New', monospace;
+      text-shadow: 0 0 10px rgba(122, 162, 247, 0.3);
+      margin-bottom: 8px;
+    }
+
+    .date-display {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Timer Section */
+    .timer-section {
+      background: var(--panel);
+      border: 1px solid #222741;
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .timer-display {
+      font-size: 2.2em;
+      font-weight: 800;
+      color: var(--accent2);
+      margin-bottom: 16px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .timer-controls {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .timer-controls button {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 13px;
+    }
+
+    .timer-start { background: var(--success); color: white; }
+    .timer-pause { background: var(--warning); color: white; }
+    .timer-reset { background: var(--danger); color: white; }
+
+    .timer-presets {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .timer-preset {
+      background: #222741;
+      color: var(--text);
+      border: 1px solid #2a304f;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .timer-preset:hover, .timer-preset.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* Player Section */
+    .player-section {
+      background: var(--panel);
+      border: 1px solid #222741;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .stats-bar {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 800;
+      display: block;
+    }
+
+    .video-info {
+      padding: 20px;
+      border-bottom: 1px solid #222741;
+      background: rgba(122, 162, 247, 0.05);
+    }
+
+    .video-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .video-meta {
+      color: var(--muted);
+      font-size: 13px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .progress-info {
+      background: rgba(0, 211, 167, 0.1);
+      border: 1px solid rgba(0, 211, 167, 0.3);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--accent2);
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .video-controls {
+      padding: 16px 20px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #222741;
+    }
+
+    .control-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .control-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .control-btn:hover {
+      background: var(--accent2);
+      transform: translateY(-2px);
+    }
+
+    .control-btn.danger {
+      background: var(--danger);
+    }
+
+    .control-btn.secondary {
+      background: #222741;
+      border: 1px solid #2a304f;
+    }
+
+    .jump-input {
+      width: 80px;
+      padding: 8px 12px;
+      border: 1px solid #2a304f;
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      text-align: center;
+    }
+
+    .player-container {
+      padding: 20px;
+    }
+
+    .player {
+      aspect-ratio: 16/9;
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+    }
+
+    /* Enhanced Sidebar */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* YouTube-style Playlist Section */
+    .playlist-section {
+      background: var(--panel);
+      border: 1px solid #222741;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      height: 700px;
+    }
+
+    .playlist-header {
+      padding: 20px;
+      border-bottom: 1px solid #222741;
+      background: rgba(122, 162, 247, 0.05);
+    }
+
+    .playlist-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .playlist-subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .playlist-search {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #2a304f;
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .playlist-search:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(122, 162, 247, 0.2);
+    }
+
+    .playlist-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+    }
+
+    /* YouTube-style Playlist Item */
+    .playlist-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(34, 39, 65, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      background: transparent;
+    }
+
+    .playlist-item:hover {
+      background: rgba(122, 162, 247, 0.08);
+    }
+
+    .playlist-item.active {
+      background: rgba(122, 162, 247, 0.15);
+      border-left: 4px solid var(--accent);
+    }
+
+    .playlist-item.watched {
+      opacity: 0.8;
+    }
+
+    .playlist-item.watched::before {
+      content: '✓';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--success);
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .playlist-item.in-progress::before {
+      content: '▶';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--warning);
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    .lecture-index {
+      background: rgba(122, 162, 247, 0.2);
+      color: var(--accent);
+      min-width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .active .lecture-index {
+      background: var(--accent);
+      color: white;
+      animation: pulse 2s infinite;
+    }
+
+    .lecture-content {
+      flex: 1;
+      min-width: 0;
+      padding-right: 24px;
+    }
+
+    .lecture-number-title {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 1.4;
+      margin-bottom: 4px;
+      color: var(--text);
+      word-wrap: break-word;
+    }
+
+    .lecture-description {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.3;
+      margin-bottom: 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .lecture-meta-info {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 3px;
+      background: rgba(34, 39, 65, 0.8);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 6px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .playlist-item:hover .progress-bar,
+    .playlist-item.active .progress-bar,
+    .progress-bar.has-progress {
+      opacity: 1;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .reset-progress {
+      position: absolute;
+      top: 12px;
+      right: 32px;
+      background: var(--danger);
+      color: white;
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 11px;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .playlist-item:hover .reset-progress {
+      opacity: 0.8;
+    }
+
+    .reset-progress:hover {
+      opacity: 1 !important;
+      transform: scale(1.1);
+    }
+
+    /* Todo Section */
+    .todo-section {
+      background: var(--panel);
+      border: 1px solid #222741;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      height: 400px;
+    }
+
+    .todo-header {
+      padding: 20px;
+      border-bottom: 1px solid #222741;
+      background: rgba(0, 211, 167, 0.05);
+    }
+
+    .todo-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .todo-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .todo-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #2a304f;
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .todo-add {
+      background: var(--accent2);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .todo-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      margin-bottom: 8px;
+      background: rgba(12, 16, 32, 0.3);
+      border: 1px solid #222741;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .todo-item:hover {
+      background: rgba(0, 211, 167, 0.05);
+    }
+
+    .todo-checkbox {
+      transform: scale(1.3);
+      accent-color: var(--accent2);
+    }
+
+    .todo-text {
+      flex: 1;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .todo-item.done .todo-text {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    .todo-delete {
+      background: var(--danger);
+      color: white;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    /* Notifications */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--panel);
+      color: var(--text);
+      padding: 16px 20px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--accent);
+      z-index: 9999;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      max-width: 350px;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    .notification.success { border-left-color: var(--success); }
+    .notification.warning { border-left-color: var(--warning); }
+    .notification.error { border-left-color: var(--danger); }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .wrap {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .sidebar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      
+      .playlist-section {
+        height: 600px;
+      }
+      
+      .todo-section {
+        height: 400px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .wrap {
+        padding: 12px;
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        grid-template-columns: 1fr;
+      }
+      
+      .header-controls {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .pill input {
+        min-width: 120px;
+      }
+    }
+
+    /* Enhanced Scrollbar */
+    .playlist-list::-webkit-scrollbar,
+    .todo-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .playlist-list::-webkit-scrollbar-track,
+    .todo-list::-webkit-scrollbar-track {
+      background: var(--bg);
+      border-radius: 4px;
+      margin: 4px;
+    }
+
+    .playlist-list::-webkit-scrollbar-thumb,
+    .todo-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 4px;
+    }
+
+    .playlist-list::-webkit-scrollbar-thumb:hover,
+    .todo-list::-webkit-scrollbar-thumb:hover {
+      background: var(--accent2);
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <div class="wrap">
+    <!-- Enhanced Header -->
+    <header class="animate-in">
+      <div class="logo">
+        <span>🎓</span>
+        <span>StudyTube Pro</span>
+        <span style="font-size: 14px; color: var(--muted);">- DSA Learning Platform</span>
+      </div>
+      <div class="header-controls">
+        <div class="pill">
+          <span>📚 Playlist ID</span>
+          <input id="playlistId" value="PLQEaRBV9gAFu4ovJ41PywklqI7IyXwr01" />
+          <button id="loadPl">Load</button>
+        </div>
+        <div class="pill">
+          <span>🔑 API Key</span>
+          <input id="apiKey" placeholder="YouTube Data API v3 key" />
+        </div>
+        <button class="theme-toggle" id="themeToggle" title="Toggle Theme">🌙</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Player Section -->
+      <section class="player-section animate-in">
+        <div class="stats-bar">
+          <div class="stat-item">
+            <span class="stat-value" id="currentVideo">1</span>
+            <span>Current</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="totalVideos">—</span>
+            <span>Total</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="completionPercent">0%</span>
+            <span>Complete</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="studyTime">0h 0m</span>
+            <span>Study Time</span>
+          </div>
+        </div>
+        
+        <div class="video-info">
+          <div class="video-title" id="videoTitle">🎬 Loading DSA content...</div>
+          <div class="video-meta">
+            <span id="videoMeta">✨ Get ready to master Data Structures & Algorithms!</span>
+          </div>
+          <div class="progress-info" id="videoProgress">No progress saved</div>
+        </div>
+        
+        <div class="video-controls">
+          <div class="control-group">
+            <button class="control-btn" id="prevBtn">⏮️ Previous</button>
+            <button class="control-btn" id="nextBtn">Next ⏭️</button>
+            <button class="control-btn secondary" id="resumeBtn">📍 Resume</button>
+          </div>
+          
+          <div class="control-group">
+            <span>Jump to:</span>
+            <input type="number" class="jump-input" id="jumpInput" min="1" placeholder="Lec #">
+            <button class="control-btn" id="jumpBtn">Go</button>
+          </div>
+          
+          <div class="control-group">
+            <button class="control-btn danger" id="resetVideoProgress">🔄 Reset Progress</button>
+          </div>
+        </div>
+        
+        <div class="player-container">
+          <div id="player" class="player"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Enhanced Sidebar -->
+    <aside class="sidebar">
+      <!-- Clock Section -->
+      <section class="clock-section animate-in">
+        <div class="digital-clock" id="digitalClock">00:00:00</div>
+        <div class="date-display" id="dateDisplay">Loading...</div>
+      </section>
+
+      <!-- Timer Section -->
+      <section class="timer-section animate-in">
+        <h3>⏱️ Study Timer</h3>
+        <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="timer-controls">
+          <button class="timer-start" id="timerStart">▶️ Start</button>
+          <button class="timer-pause" id="timerPause">⏸️ Pause</button>
+          <button class="timer-reset" id="timerReset">🔄 Reset</button>
+        </div>
+        <div class="timer-presets">
+          <div class="timer-preset active" data-minutes="25">25m Pomodoro</div>
+          <div class="timer-preset" data-minutes="15">15m Short</div>
+          <div class="timer-preset" data-minutes="45">45m Focus</div>
+          <div class="timer-preset" data-minutes="60">1h Deep</div>
+        </div>
+      </section>
+
+      <!-- YouTube-style Playlist Section -->
+      <section class="playlist-section animate-in">
+        <div class="playlist-header">
+          <div class="playlist-title">
+            <span>📚</span>
+            <span>DSA Playlist in C++</span>
+          </div>
+          <div class="playlist-subtitle">Coder Army • <span id="playlistCount">Loading...</span></div>
+          <input type="text" class="playlist-search" id="playlistSearch" placeholder="🔍 Search lectures...">
+        </div>
+        <div class="playlist-list" id="playlistList">
+          <!-- Playlist items will be populated here -->
+        </div>
+      </section>
+
+      <!-- Todo Section -->
+      <section class="todo-section animate-in">
+        <div class="todo-header">
+          <div class="todo-title">
+            <span>✅</span>
+            <span>Study Notes & Tasks</span>
+          </div>
+          <div class="todo-form">
+            <input type="text" class="todo-input" id="todoInput" placeholder="Add a note or task...">
+            <button class="todo-add" id="todoAdd">➕</button>
+          </div>
+        </div>
+        <div class="todo-list" id="todoList">
+          <!-- Todo items will be populated here -->
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <script>
+    // ---------- Enhanced State Management ----------
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+    const state = {
+      playlistId: 'PLQEaRBV9gAFu4ovJ41PywklqI7IyXwr01',
+      apiKey: '',
+      ids: [],
+      titles: {},
+      player: null,
+      currentIndex: 0,
+      sessionStart: Date.now(),
+      timerSeconds: 1500, // 25 minutes
+      timerInterval: null,
+      timerRunning: false,
+      clockInterval: null,
+      studyTimeInterval: null,
+      videoProgress: {}, // Store progress for each video
+    };
+
+    // Storage keys
+    const STORAGE_KEYS = {
+      playlist: (pid) => `studytube-pro:playlist:${pid}`,
+      progress: (pid) => `studytube-pro:progress:${pid}`,
+      todos: (pid) => `studytube-pro:todos:${pid}`,
+      theme: 'studytube-pro:theme',
+      session: 'studytube-pro:session'
+    };
+
+    // ---------- Enhanced Video Title Parsing ----------
+    function parseVideoTitle(title, index) {
+      // Remove common prefixes and clean the title
+      let cleanTitle = title
+        .replace(/^(DSA Playlist in C\+\+\s*[-|:]?\s*)/i, '')
+        .replace(/^(Coder Army\s*[-|:]?\s*)/i, '')
+        .replace(/^(Data Structures?\s*[-|:]?\s*)/i, '')
+        .replace(/^(Algorithm\s*[-|:]?\s*)/i, '')
+        .trim();
+
+      // Enhanced patterns to match lecture formats exactly like your image
+      const patterns = [
+        // "Lecture 01: Introduction To Programming for Beginners"
+        /^Lecture\s*(\d+)\s*:\s*(.+)$/i,
+        // "Lec 01: Introduction To Programming"
+        /^Lec\s*(\d+)\s*:\s*(.+)$/i,
+        // "01: Introduction To Programming"
+        /^(\d+)\s*:\s*(.+)$/,
+        // "01 - Introduction To Programming"
+        /^(\d+)\s*[-–]\s*(.+)$/,
+        // "01. Introduction To Programming"
+        /^(\d+)\.\s*(.+)$/,
+        // "Introduction To Programming - Lecture 01"
+        /^(.+)\s*[-–]\s*Lecture\s*(\d+)$/i,
+        // Just title without number
+        /^(.+)$/
+      ];
+
+      for (let i = 0; i < patterns.length; i++) {
+        const pattern = patterns[i];
+        const match = cleanTitle.match(pattern);
+        
+        if (match) {
+          let lectureNumber, title;
+          
+          if (i === patterns.length - 1) {
+            // Last pattern - just title without number
+            lectureNumber = index + 1;
+            title = match[1].trim();
+          } else if (i === patterns.length - 2) {
+            // "Title - Lecture XX" format
+            lectureNumber = parseInt(match[2]) || (index + 1);
+            title = match[1].trim();
+          } else {
+            // All other formats
+            lectureNumber = parseInt(match[1]) || (index + 1);
+            title = match[2].trim();
+          }
+
+          // Format exactly like your image: "Lecture 01: Title"
+          const formattedNumber = lectureNumber.toString().padStart(2, '0');
+          
+          return {
+            lectureNumber: lectureNumber,
+            formattedTitle: `Lecture ${formattedNumber}: ${title}`,
+            shortTitle: title,
+            originalTitle: title
+          };
+        }
+      }
+
+      // Fallback
+      const lectureNumber = index + 1;
+      const formattedNumber = lectureNumber.toString().padStart(2, '0');
+      
+      return {
+        lectureNumber: lectureNumber,
+        formattedTitle: `Lecture ${formattedNumber}: ${cleanTitle}`,
+        shortTitle: cleanTitle,
+        originalTitle: cleanTitle
+      };
+    }
+
+    function formatTime(seconds) {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = seconds % 60;
+      
+      if (hours > 0) {
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }
+      return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => notification.classList.add('show'), 100);
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    function saveToStorage(key, data) {
+      try {
+        localStorage.setItem(key, JSON.stringify(data));
+      } catch (e) {
+        console.warn('Failed to save to localStorage:', e);
+      }
+    }
+
+    function loadFromStorage(key, defaultValue = null) {
+      try {
+        const data = localStorage.getItem(key);
+        return data ? JSON.parse(data) : defaultValue;
+      } catch (e) {
+        console.warn('Failed to load from localStorage:', e);
+        return defaultValue;
+      }
+    }
+
+    // ---------- Clock Functions ----------
+    function updateClock() {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('en-US', { 
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      const dateString = now.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      $('#digitalClock').textContent = timeString;
+      $('#dateDisplay').textContent = dateString;
+    }
+
+    function startClock() {
+      updateClock();
+      state.clockInterval = setInterval(updateClock, 1000);
+    }
+
+    // ---------- Timer Functions ----------
+    function updateTimerDisplay() {
+      const minutes = Math.floor(state.timerSeconds / 60);
+      const seconds = state.timerSeconds % 60;
+      $('#timerDisplay').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+      if (!state.timerRunning && state.timerSeconds > 0) {
+        state.timerRunning = true;
+        state.timerInterval = setInterval(() => {
+          state.timerSeconds--;
+          updateTimerDisplay();
+          
+          if (state.timerSeconds <= 0) {
+            pauseTimer();
+            showNotification('🎉 Study session complete! Time for a break!', 'success');
+            resetTimer();
+          }
+        }, 1000);
+        showNotification('⏱️ Timer started!', 'success');
+      }
+    }
+
+    function pauseTimer() {
+      state.timerRunning = false;
+      if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+        state.timerInterval = null;
+      }
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      const activePreset = $('.timer-preset.active');
+      const minutes = parseInt(activePreset.dataset.minutes);
+      state.timerSeconds = minutes * 60;
+      updateTimerDisplay();
+    }
+
+    // ---------- Progress Management ----------
+    function saveVideoProgress() {
+      if (!state.player) return;
+      
+      try {
+        const currentTime = state.player.getCurrentTime();
+        const duration = state.player.getDuration();
+        const videoIndex = state.player.getPlaylistIndex();
+        
+        if (currentTime && duration && videoIndex >= 0) {
+          state.videoProgress[videoIndex] = {
+            currentTime: Math.floor(currentTime),
+            duration: Math.floor(duration),
+            percentage: Math.floor((currentTime / duration) * 100),
+            lastWatched: Date.now()
+          };
+          
+          saveToStorage(STORAGE_KEYS.progress(state.playlistId), state.videoProgress);
+          updateVideoProgressDisplay();
+          updatePlaylistProgress();
+        }
+      } catch (e) {
+        console.warn('Failed to save video progress:', e);
+      }
+    }
+
+    function loadVideoProgress() {
+      state.videoProgress = loadFromStorage(STORAGE_KEYS.progress(state.playlistId), {});
+      updateVideoProgressDisplay();
+      updatePlaylistProgress();
+    }
+
+    function resetVideoProgress(videoIndex = null) {
+      const index = videoIndex !== null ? videoIndex : state.player?.getPlaylistIndex();
+      if (index >= 0) {
+        delete state.videoProgress[index];
+        saveToStorage(STORAGE_KEYS.progress(state.playlistId), state.videoProgress);
+        updateVideoProgressDisplay();
+        updatePlaylistProgress();
+        showNotification(`🔄 Progress reset for lecture ${index + 1}`, 'warning');
+      }
+    }
+
+    function updateVideoProgressDisplay() {
+      const currentIndex = state.player?.getPlaylistIndex() ?? 0;
+      const progress = state.videoProgress[currentIndex];
+      
+      if (progress) {
+        const timeStr = `${formatTime(progress.currentTime)} / ${formatTime(progress.duration)}`;
+        $('#videoProgress').textContent = `Progress: ${progress.percentage}% (${timeStr})`;
+      } else {
+        $('#videoProgress').textContent = 'No progress saved';
+      }
+    }
+
+    function resumeVideoProgress() {
+      const currentIndex = state.player?.getPlaylistIndex() ?? 0;
+      const progress = state.videoProgress[currentIndex];
+      
+      if (progress && progress.currentTime > 30) { // Only resume if more than 30 seconds
+        state.player.seekTo(progress.currentTime);
+        showNotification(`📍 Resumed from ${formatTime(progress.currentTime)}`, 'success');
+      } else {
+        showNotification('⚠️ No saved progress to resume', 'warning');
+      }
+    }
+
+    // ---------- YouTube Player Functions ----------
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+
+    window.onYouTubeIframeAPIReady = () => {
+      createPlayer(state.playlistId);
+      initializeApp();
+    };
+
+    function createPlayer(playlistId) {
+      state.playlistId = playlistId;
+      if (state.player) {
+        state.player.destroy();
+      }
+      
+      state.player = new YT.Player('player', {
+        height: '390',
+        width: '640',
+        playerVars: {
+          listType: 'playlist',
+          list: playlistId,
+          modestbranding: 1,
+          rel: 0,
+          iv_load_policy: 3,
+          color: 'white'
+        },
+        events: {
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange
+        }
+      });
+    }
+
+    function onPlayerReady() {
+      const poll = setInterval(() => {
+        try {
+          const list = state.player.getPlaylist?.() || [];
+          if (list.length) {
+            clearInterval(poll);
+            state.ids = list;
+            loadVideoProgress();
+            buildPlaylist();
+            updateStats();
+            fetchVideoTitles();
+            updateCurrentVideo();
+            showNotification(`🎉 Loaded DSA playlist with ${list.length} lectures!`, 'success');
+          }
+        } catch { }
+      }, 250);
+    }
+
+    function onPlayerStateChange(e) {
+      if (e.data === YT.PlayerState.PLAYING || e.data === YT.PlayerState.PAUSED) {
+        updateCurrentVideo();
+        updateStats();
+        saveVideoProgress();
+      }
+      
+      // Auto-save progress every 10 seconds during playback
+      if (e.data === YT.PlayerState.PLAYING) {
+        const progressInterval = setInterval(() => {
+          if (state.player.getPlayerState() === YT.PlayerState.PLAYING) {
+            saveVideoProgress();
+          } else {
+            clearInterval(progressInterval);
+          }
+        }, 10000);
+      }
+    }
+
+    // ---------- Enhanced Playlist Management ----------
+    function buildPlaylist(filter = '') {
+      const container = $('#playlistList');
+      container.innerHTML = '';
+      
+      const query = filter.toLowerCase().trim();
+      
+      state.ids.forEach((videoId, index) => {
+        const rawTitle = state.titles[videoId] || `Video ${index + 1}`;
+        const parsed = parseVideoTitle(rawTitle, index);
+        
+        // Filter logic
+        const searchText = `${parsed.formattedTitle} ${parsed.shortTitle} ${rawTitle}`.toLowerCase();
+        if (query && !searchText.includes(query)) return;
+        
+        const progress = state.videoProgress[index];
+        const isWatched = progress && progress.percentage >= 90;
+        const isInProgress = progress && progress.percentage > 5 && progress.percentage < 90;
+        
+        const item = document.createElement('div');
+        item.className = `playlist-item ${isWatched ? 'watched' : ''} ${isInProgress ? 'in-progress' : ''}`;
+        item.dataset.index = index;
+        
+        // Create a truncated description for longer titles
+        const description = parsed.shortTitle.length > 50 
+          ? parsed.shortTitle.substring(0, 50) + '...'
+          : parsed.shortTitle;
+        
+        item.innerHTML = `
+          <div class="lecture-index">${index + 1}</div>
+          <div class="lecture-content">
+            <div class="lecture-number-title">${parsed.formattedTitle}</div>
+            <div class="lecture-description">${description}</div>
+            <div class="lecture-meta-info">
+              <span>Coder Army</span>
+              ${progress ? `<span>⏱️ ${progress.percentage}% complete</span>` : '<span>🆕 New</span>'}
+              <span>🆔 ${videoId}</span>
+            </div>
+            <div class="progress-bar ${progress ? 'has-progress' : ''}">
+              <div class="progress-fill" style="width: ${progress ? progress.percentage : 0}%"></div>
+            </div>
+          </div>
+          <button class="reset-progress" onclick="resetVideoProgress(${index})" title="Reset Progress">🔄</button>
+        `;
+        
+        item.addEventListener('click', (e) => {
+          if (e.target.classList.contains('reset-progress')) return;
+          state.player.playVideoAt(index);
+          showNotification(`🎬 Playing ${parsed.formattedTitle}`, 'info');
+        });
+        
+        container.appendChild(item);
+      });
+      
+      updateActivePlaylistItem();
+      updatePlaylistCount();
+    }
+
+    function updateActivePlaylistItem() {
+      const currentIndex = state.player?.getPlaylistIndex() ?? 0;
+      $$('.playlist-item').forEach((item, index) => {
+        item.classList.toggle('active', parseInt(item.dataset.index) === currentIndex);
+      });
+    }
+
+    function updatePlaylistProgress() {
+      buildPlaylist($('#playlistSearch').value);
+    }
+
+    function updatePlaylistCount() {
+      const totalVideos = state.ids.length;
+      const visibleVideos = $$('.playlist-item').length;
+      
+      if (visibleVideos === totalVideos) {
+        $('#playlistCount').textContent = `${totalVideos}/163`;
+      } else {
+        $('#playlistCount').textContent = `${visibleVideos} of ${totalVideos}/163`;
+      }
+    }
+
+    // ---------- Video Information Updates ----------
+    function updateCurrentVideo() {
+      try {
+        const data = state.player.getVideoData();
+        const index = state.player.getPlaylistIndex() ?? 0;
+        const rawTitle = data?.title || state.titles[state.ids[index]] || `Video ${index + 1}`;
+        const parsed = parseVideoTitle(rawTitle, index);
+        
+        $('#videoTitle').textContent = parsed.formattedTitle;
+        $('#videoMeta').textContent = `🆔 ${data?.video_id || state.ids[index]} • 📊 Video ${index + 1} of ${state.ids.length} • 👨‍💻 Coder Army`;
+        
+        updateVideoProgressDisplay();
+        updateActivePlaylistItem();
+      } catch (e) {
+        console.warn('Failed to update current video info:', e);
+      }
+    }
+
+    function updateStats() {
+      const current = (state.player?.getPlaylistIndex() ?? 0) + 1;
+      const total = state.ids.length;
+      const watchedCount = Object.values(state.videoProgress).filter(p => p.percentage >= 90).length;
+      const completion = total > 0 ? Math.round((watchedCount / total) * 100) : 0;
+      
+      $('#currentVideo').textContent = current;
+      $('#totalVideos').textContent = total;
+      $('#completionPercent').textContent = `${completion}%`;
+      
+      updateStudyTime();
+    }
+
+    function updateStudyTime() {
+      const elapsed = Date.now() - state.sessionStart;
+      const hours = Math.floor(elapsed / (1000 * 60 * 60));
+      const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+      $('#studyTime').textContent = `${hours}h ${minutes}m`;
+    }
+
+    // ---------- API Integration ----------
+    async function fetchVideoTitles() {
+      const apiKey = $('#apiKey').value.trim();
+      if (!apiKey || !state.ids.length) return;
+      
+      showNotification('🔄 Fetching lecture titles...', 'info');
+      
+      try {
+        for (let i = 0; i < state.ids.length; i += 50) {
+          const chunk = state.ids.slice(i, i + 50).join(',');
+          const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${chunk}&key=${encodeURIComponent(apiKey)}`;
+          
+          const response = await fetch(url);
+          if (!response.ok) throw new Error('API request failed');
+          
+          const data = await response.json();
+          (data.items || []).forEach(item => {
+            state.titles[item.id] = item.snippet?.title || '';
+          });
+        }
+        
+        buildPlaylist($('#playlistSearch').value);
+        updateCurrentVideo();
+        showNotification('✅ Lecture titles loaded successfully!', 'success');
+      } catch (error) {
+        console.warn('Failed to fetch video titles:', error);
+        showNotification('❌ Failed to fetch video titles', 'error');
+      }
+    }
+
+    // ---------- Todo Management ----------
+    let todos = [];
+
+    function loadTodos() {
+      todos = loadFromStorage(STORAGE_KEYS.todos(state.playlistId), []);
+      renderTodos();
+    }
+
+    function saveTodos() {
+      saveToStorage(STORAGE_KEYS.todos(state.playlistId), todos);
+    }
+
+    function addTodo() {
+      const input = $('#todoInput');
+      const text = input.value.trim();
+      
+      if (text) {
+        const currentIndex = state.player?.getPlaylistIndex() ?? 0;
+        todos.push({
+          id: crypto.randomUUID(),
+          text,
+          completed: false,
+          videoIndex: currentIndex,
+          timestamp: Date.now()
+        });
+        
+        input.value = '';
+        saveTodos();
+        renderTodos();
+        showNotification('✅ Note added!', 'success');
+      }
+    }
+
+    function toggleTodo(id) {
+      const todo = todos.find(t => t.id === id);
+      if (todo) {
+        todo.completed = !todo.completed;
+        saveTodos();
+        renderTodos();
+        showNotification(todo.completed ? '✅ Task completed!' : '📝 Task reopened', 'info');
+      }
+    }
+
+    function deleteTodo(id) {
+      todos = todos.filter(t => t.id !== id);
+      saveTodos();
+      renderTodos();
+      showNotification('🗑️ Note deleted', 'warning');
+    }
+
+    function renderTodos() {
+      const container = $('#todoList');
+      container.innerHTML = '';
+      
+      todos.forEach(todo => {
+        const item = document.createElement('div');
+        item.className = `todo-item ${todo.completed ? 'done' : ''}`;
+        
+        item.innerHTML = `
+          <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''}>
+          <div class="todo-text">${todo.text}</div>
+          <small style="color: var(--muted); font-size: 11px;">L${todo.videoIndex + 1}</small>
+          <button class="todo-delete">🗑️</button>
+        `;
+        
+        const checkbox = item.querySelector('.todo-checkbox');
+        checkbox.addEventListener('change', () => toggleTodo(todo.id));
+        
+        const deleteBtn = item.querySelector('.todo-delete');
+        deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
+        
+        container.appendChild(item);
+      });
+    }
+
+    // ---------- Theme Management ----------
+    function initTheme() {
+      const savedTheme = loadFromStorage(STORAGE_KEYS.theme, 'dark');
+      document.body.dataset.theme = savedTheme;
+      updateThemeButton();
+    }
+
+    function toggleTheme() {
+      const current = document.body.dataset.theme;
+      const newTheme = current === 'dark' ? 'light' : 'dark';
+      document.body.dataset.theme = newTheme;
+      saveToStorage(STORAGE_KEYS.theme, newTheme);
+      updateThemeButton();
+      showNotification(`Switched to ${newTheme} mode`, 'success');
+    }
+
+    function updateThemeButton() {
+      const isDark = document.body.dataset.theme === 'dark';
+      $('#themeToggle').textContent = isDark ? '🌙' : '☀️';
+    }
+
+    // ---------- Event Listeners ----------
+    function setupEventListeners() {
+      // Header controls
+      $('#loadPl').addEventListener('click', () => {
+        const playlistId = $('#playlistId').value.trim();
+        if (playlistId) {
+          createPlayer(playlistId);
+          showNotification('🔄 Loading DSA playlist...', 'info');
+        }
+      });
+      
+      $('#themeToggle').addEventListener('click', toggleTheme);
+      
+      // Video controls
+      $('#prevBtn').addEventListener('click', () => {
+        state.player.previousVideo();
+        showNotification('⏮️ Previous lecture', 'info');
+      });
+      
+      $('#nextBtn').addEventListener('click', () => {
+        state.player.nextVideo();
+        showNotification('⏭️ Next lecture', 'info');
+      });
+      
+      $('#resumeBtn').addEventListener('click', resumeVideoProgress);
+      $('#resetVideoProgress').addEventListener('click', () => resetVideoProgress());
+      
+      $('#jumpBtn').addEventListener('click', () => {
+        const lectureNum = parseInt($('#jumpInput').value);
+        if (lectureNum >= 1 && lectureNum <= state.ids.length) {
+          state.player.playVideoAt(lectureNum - 1);
+          showNotification(`🚀 Jumped to Lecture ${lectureNum.toString().padStart(2, '0')}!`, 'success');
+          $('#jumpInput').value = '';
+        } else {
+          showNotification(`❌ Enter a lecture number between 1 and ${state.ids.length}`, 'error');
+        }
+      });
+      
+      $('#jumpInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          $('#jumpBtn').click();
+        }
+      });
+      
+      // Timer controls
+      $('#timerStart').addEventListener('click', startTimer);
+      $('#timerPause').addEventListener('click', pauseTimer);
+      $('#timerReset').addEventListener('click', resetTimer);
+      
+      // Timer presets
+      $$('.timer-preset').forEach(preset => {
+        preset.addEventListener('click', () => {
+          $$('.timer-preset').forEach(p => p.classList.remove('active'));
+          preset.classList.add('active');
+          resetTimer();
+        });
+      });
+      
+      // Playlist search
+      $('#playlistSearch').addEventListener('input', (e) => {
+        buildPlaylist(e.target.value);
+      });
+      
+      // Todo controls
+      $('#todoAdd').addEventListener('click', addTodo);
+      $('#todoInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          addTodo();
+        }
+      });
+      
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+        
+        switch (e.key.toLowerCase()) {
+          case 'n':
+            $('#nextBtn').click();
+            break;
+          case 'p':
+            $('#prevBtn').click();
+            break;
+          case 'j':
+            $('#jumpInput').focus();
+            break;
+          case 'r':
+            $('#resumeBtn').click();
+            break;
+          case 't':
+            toggleTheme();
+            break;
+          case ' ':
+            e.preventDefault();
+            if (state.timerRunning) {
+              pauseTimer();
+            } else {
+              startTimer();
+            }
+            break;
+        }
+      });
+    }
+
+    // ---------- App Initialization ----------
+    function initializeApp() {
+      initTheme();
+      startClock();
+      loadTodos();
+      setupEventListeners();
+      
+      // Start study time tracking
+      state.studyTimeInterval = setInterval(updateStudyTime, 60000);
+      updateStudyTime();
+      
+      // Auto-save progress periodically
+      setInterval(() => {
+        if (state.player && state.player.getPlayerState() === YT.PlayerState.PLAYING) {
+          saveVideoProgress();
+        }
+      }, 30000);
+      
+      showNotification('🎉 Welcome to DSA Learning with StudyTube Pro!', 'success');
+    }
+
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
+        // YouTube API not loaded yet, wait for it
+        return;
+      }
+      initializeApp();
+    });
+
+    // Global function for reset buttons
+    window.resetVideoProgress = resetVideoProgress;
+  </script>
+</body>
+</html>
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
