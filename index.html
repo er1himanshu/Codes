@@ -1,9 +1,19 @@
+Of course\! I've added the line to include your `favicon.png` as the website's tab icon.
+
+The key change was moving the favicon link, `<link rel="icon" type="image/png" href="favicon.png">`, into the `<head>` section of the HTML document. This is the correct place for it to be recognized by web browsers.
+
+Here is the complete, updated code with the favicon link properly included.
+
+-----
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>StudyTube Pro - DSA Learning Platform</title>
+  <link rel="icon" type="image/png" href="favicon.png">
   <style>
     :root {
       --bg: #0f1220;
@@ -814,7 +824,6 @@
 </head>
 <body data-theme="dark">
   <div class="wrap">
-    <link rel="icon" type="image/png" href="favicon.png">
     <header class="animate-in">
       <div class="logo">
         <span>🎓</span>
@@ -920,7 +929,7 @@
           <input type="text" class="playlist-search" id="playlistSearch" placeholder="🔍 Search lectures...">
         </div>
         <div class="playlist-list" id="playlistList">
-          </div>
+        </div>
       </section>
 
       <section class="todo-section animate-in">
@@ -935,7 +944,7 @@
           </div>
         </div>
         <div class="todo-list" id="todoList">
-          </div>
+        </div>
       </section>
     </aside>
   </div>
@@ -1443,3 +1452,4 @@
   </script>
 </body>
 </html>
+```
