@@ -814,7 +814,6 @@
 </head>
 <body data-theme="dark">
   <div class="wrap">
-    <!-- Enhanced Header -->
     <header class="animate-in">
       <div class="logo">
         <span>🎓</span>
@@ -835,9 +834,7 @@
       </div>
     </header>
 
-    <!-- Main Content -->
     <main class="main-content">
-      <!-- Player Section -->
       <section class="player-section animate-in">
         <div class="stats-bar">
           <div class="stat-item">
@@ -890,15 +887,12 @@
       </section>
     </main>
 
-    <!-- Enhanced Sidebar -->
     <aside class="sidebar">
-      <!-- Clock Section -->
       <section class="clock-section animate-in">
         <div class="digital-clock" id="digitalClock">00:00:00</div>
         <div class="date-display" id="dateDisplay">Loading...</div>
       </section>
 
-      <!-- Timer Section -->
       <section class="timer-section animate-in">
         <h3>⏱️ Study Timer</h3>
         <div class="timer-display" id="timerDisplay">25:00</div>
@@ -915,22 +909,19 @@
         </div>
       </section>
 
-      <!-- YouTube-style Playlist Section -->
       <section class="playlist-section animate-in">
         <div class="playlist-header">
           <div class="playlist-title">
             <span>📚</span>
-            <span>DSA Playlist in C++</span>
+            <span id="playlistName">DSA Playlist in C++</span>
           </div>
           <div class="playlist-subtitle">Coder Army • <span id="playlistCount">Loading...</span></div>
           <input type="text" class="playlist-search" id="playlistSearch" placeholder="🔍 Search lectures...">
         </div>
         <div class="playlist-list" id="playlistList">
-          <!-- Playlist items will be populated here -->
-        </div>
+          </div>
       </section>
 
-      <!-- Todo Section -->
       <section class="todo-section animate-in">
         <div class="todo-header">
           <div class="todo-title">
@@ -943,8 +934,7 @@
           </div>
         </div>
         <div class="todo-list" id="todoList">
-          <!-- Todo items will be populated here -->
-        </div>
+          </div>
       </section>
     </aside>
   </div>
@@ -968,6 +958,7 @@
       clockInterval: null,
       studyTimeInterval: null,
       videoProgress: {}, // Store progress for each video
+      isInitialPlay: true, // **FIX**: Flag to handle the first playback event for resuming
     };
 
     // Storage keys
@@ -976,90 +967,40 @@
       progress: (pid) => `studytube-pro:progress:${pid}`,
       todos: (pid) => `studytube-pro:todos:${pid}`,
       theme: 'studytube-pro:theme',
-      session: 'studytube-pro:session'
+      lastVideoIndex: (pid) => `studytube-pro:last-video-index:${pid}`, 
     };
 
     // ---------- Enhanced Video Title Parsing ----------
     function parseVideoTitle(title, index) {
-      // Remove common prefixes and clean the title
+      // This function remains the same
       let cleanTitle = title
         .replace(/^(DSA Playlist in C\+\+\s*[-|:]?\s*)/i, '')
         .replace(/^(Coder Army\s*[-|:]?\s*)/i, '')
         .replace(/^(Data Structures?\s*[-|:]?\s*)/i, '')
         .replace(/^(Algorithm\s*[-|:]?\s*)/i, '')
         .trim();
-
-      // Enhanced patterns to match lecture formats exactly like your image
-      const patterns = [
-        // "Lecture 01: Introduction To Programming for Beginners"
-        /^Lecture\s*(\d+)\s*:\s*(.+)$/i,
-        // "Lec 01: Introduction To Programming"
-        /^Lec\s*(\d+)\s*:\s*(.+)$/i,
-        // "01: Introduction To Programming"
-        /^(\d+)\s*:\s*(.+)$/,
-        // "01 - Introduction To Programming"
-        /^(\d+)\s*[-–]\s*(.+)$/,
-        // "01. Introduction To Programming"
-        /^(\d+)\.\s*(.+)$/,
-        // "Introduction To Programming - Lecture 01"
-        /^(.+)\s*[-–]\s*Lecture\s*(\d+)$/i,
-        // Just title without number
-        /^(.+)$/
-      ];
-
+      const patterns = [/^Lecture\s*(\d+)\s*:\s*(.+)$/i,/^Lec\s*(\d+)\s*:\s*(.+)$/i,/^(\d+)\s*:\s*(.+)$/,/^(\d+)\s*[-–]\s*(.+)$/,/^(\d+)\.\s*(.+)$/,/^(.+)\s*[-–]\s*Lecture\s*(\d+)$/i,/^(.+)$/];
       for (let i = 0; i < patterns.length; i++) {
-        const pattern = patterns[i];
-        const match = cleanTitle.match(pattern);
-        
+        const match = cleanTitle.match(patterns[i]);
         if (match) {
-          let lectureNumber, title;
-          
-          if (i === patterns.length - 1) {
-            // Last pattern - just title without number
-            lectureNumber = index + 1;
-            title = match[1].trim();
-          } else if (i === patterns.length - 2) {
-            // "Title - Lecture XX" format
-            lectureNumber = parseInt(match[2]) || (index + 1);
-            title = match[1].trim();
-          } else {
-            // All other formats
-            lectureNumber = parseInt(match[1]) || (index + 1);
-            title = match[2].trim();
-          }
-
-          // Format exactly like your image: "Lecture 01: Title"
+          let lectureNumber, titleText;
+          if (i === patterns.length - 1) { lectureNumber = index + 1; titleText = match[1].trim(); }
+          else if (i === patterns.length - 2) { lectureNumber = parseInt(match[2]) || (index + 1); titleText = match[1].trim(); }
+          else { lectureNumber = parseInt(match[1]) || (index + 1); titleText = match[2].trim(); }
           const formattedNumber = lectureNumber.toString().padStart(2, '0');
-          
-          return {
-            lectureNumber: lectureNumber,
-            formattedTitle: `Lecture ${formattedNumber}: ${title}`,
-            shortTitle: title,
-            originalTitle: title
-          };
+          return { lectureNumber, formattedTitle: `Lecture ${formattedNumber}: ${titleText}`, shortTitle: titleText, originalTitle: titleText };
         }
       }
-
-      // Fallback
       const lectureNumber = index + 1;
       const formattedNumber = lectureNumber.toString().padStart(2, '0');
-      
-      return {
-        lectureNumber: lectureNumber,
-        formattedTitle: `Lecture ${formattedNumber}: ${cleanTitle}`,
-        shortTitle: cleanTitle,
-        originalTitle: cleanTitle
-      };
+      return { lectureNumber, formattedTitle: `Lecture ${formattedNumber}: ${cleanTitle}`, shortTitle: cleanTitle, originalTitle: cleanTitle };
     }
 
     function formatTime(seconds) {
       const hours = Math.floor(seconds / 3600);
       const minutes = Math.floor((seconds % 3600) / 60);
       const secs = seconds % 60;
-      
-      if (hours > 0) {
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-      }
+      if (hours > 0) return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
       return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
 
@@ -1068,50 +1009,23 @@
       notification.className = `notification ${type}`;
       notification.textContent = message;
       document.body.appendChild(notification);
-      
       setTimeout(() => notification.classList.add('show'), 100);
-      setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
-      }, 3000);
+      setTimeout(() => { notification.classList.remove('show'); setTimeout(() => notification.remove(), 300); }, 3000);
     }
 
     function saveToStorage(key, data) {
-      try {
-        localStorage.setItem(key, JSON.stringify(data));
-      } catch (e) {
-        console.warn('Failed to save to localStorage:', e);
-      }
+      try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) { console.warn('Failed to save to localStorage:', e); }
     }
 
     function loadFromStorage(key, defaultValue = null) {
-      try {
-        const data = localStorage.getItem(key);
-        return data ? JSON.parse(data) : defaultValue;
-      } catch (e) {
-        console.warn('Failed to load from localStorage:', e);
-        return defaultValue;
-      }
+      try { const data = localStorage.getItem(key); return data ? JSON.parse(data) : defaultValue; } catch (e) { console.warn('Failed to load from localStorage:', e); return defaultValue; }
     }
 
     // ---------- Clock Functions ----------
     function updateClock() {
       const now = new Date();
-      const timeString = now.toLocaleTimeString('en-US', { 
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      });
-      const dateString = now.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-      
-      $('#digitalClock').textContent = timeString;
-      $('#dateDisplay').textContent = dateString;
+      $('#digitalClock').textContent = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      $('#dateDisplay').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     }
 
     function startClock() {
@@ -1132,7 +1046,6 @@
         state.timerInterval = setInterval(() => {
           state.timerSeconds--;
           updateTimerDisplay();
-          
           if (state.timerSeconds <= 0) {
             pauseTimer();
             showNotification('🎉 Study session complete! Time for a break!', 'success');
@@ -1145,10 +1058,7 @@
 
     function pauseTimer() {
       state.timerRunning = false;
-      if (state.timerInterval) {
-        clearInterval(state.timerInterval);
-        state.timerInterval = null;
-      }
+      if (state.timerInterval) { clearInterval(state.timerInterval); state.timerInterval = null; }
     }
 
     function resetTimer() {
@@ -1161,14 +1071,14 @@
 
     // ---------- Progress Management ----------
     function saveVideoProgress() {
-      if (!state.player) return;
+      if (!state.player || typeof state.player.getPlaylistIndex !== 'function') return;
       
       try {
         const currentTime = state.player.getCurrentTime();
         const duration = state.player.getDuration();
         const videoIndex = state.player.getPlaylistIndex();
         
-        if (currentTime && duration && videoIndex >= 0) {
+        if (duration > 0 && videoIndex >= 0) { // Ensure duration is valid
           state.videoProgress[videoIndex] = {
             currentTime: Math.floor(currentTime),
             duration: Math.floor(duration),
@@ -1177,6 +1087,7 @@
           };
           
           saveToStorage(STORAGE_KEYS.progress(state.playlistId), state.videoProgress);
+          saveToStorage(STORAGE_KEYS.lastVideoIndex(state.playlistId), videoIndex);
           updateVideoProgressDisplay();
           updatePlaylistProgress();
         }
@@ -1187,6 +1098,7 @@
 
     function loadVideoProgress() {
       state.videoProgress = loadFromStorage(STORAGE_KEYS.progress(state.playlistId), {});
+      state.currentIndex = loadFromStorage(STORAGE_KEYS.lastVideoIndex(state.playlistId), 0);
       updateVideoProgressDisplay();
       updatePlaylistProgress();
     }
@@ -1203,26 +1115,24 @@
     }
 
     function updateVideoProgressDisplay() {
-      const currentIndex = state.player?.getPlaylistIndex() ?? 0;
+      const currentIndex = state.player?.getPlaylistIndex() ?? state.currentIndex;
       const progress = state.videoProgress[currentIndex];
       
       if (progress) {
-        const timeStr = `${formatTime(progress.currentTime)} / ${formatTime(progress.duration)}`;
-        $('#videoProgress').textContent = `Progress: ${progress.percentage}% (${timeStr})`;
+        $('#videoProgress').textContent = `Progress: ${progress.percentage}% (${formatTime(progress.currentTime)} / ${formatTime(progress.duration)})`;
       } else {
         $('#videoProgress').textContent = 'No progress saved';
       }
     }
 
     function resumeVideoProgress() {
-      const currentIndex = state.player?.getPlaylistIndex() ?? 0;
-      const progress = state.videoProgress[currentIndex];
+      // **FIX**: Use the state.currentIndex loaded from storage for reliability
+      const indexToResume = state.currentIndex;
+      const progress = state.videoProgress[indexToResume];
       
-      if (progress && progress.currentTime > 30) { // Only resume if more than 30 seconds
-        state.player.seekTo(progress.currentTime);
+      if (progress && progress.currentTime > 5) {
+        state.player.seekTo(progress.currentTime, true); // seek ahead
         showNotification(`📍 Resumed from ${formatTime(progress.currentTime)}`, 'success');
-      } else {
-        showNotification('⚠️ No saved progress to resume', 'warning');
       }
     }
 
@@ -1232,7 +1142,6 @@
     document.head.appendChild(tag);
 
     window.onYouTubeIframeAPIReady = () => {
-      createPlayer(state.playlistId);
       initializeApp();
     };
 
@@ -1242,21 +1151,16 @@
         state.player.destroy();
       }
       
+      loadVideoProgress(); // **FIX**: Load state *before* creating the player
+
       state.player = new YT.Player('player', {
-        height: '390',
-        width: '640',
+        height: '390', width: '640',
         playerVars: {
-          listType: 'playlist',
-          list: playlistId,
-          modestbranding: 1,
-          rel: 0,
-          iv_load_policy: 3,
-          color: 'white'
+          listType: 'playlist', list: playlistId,
+          index: state.currentIndex, // **FIX**: Tell player which video to start on
+          modestbranding: 1, rel: 0, iv_load_policy: 3, color: 'white'
         },
-        events: {
-          onReady: onPlayerReady,
-          onStateChange: onPlayerStateChange
-        }
+        events: { onReady: onPlayerReady, onStateChange: onPlayerStateChange }
       });
     }
 
@@ -1267,25 +1171,32 @@
           if (list.length) {
             clearInterval(poll);
             state.ids = list;
-            loadVideoProgress();
             buildPlaylist();
             updateStats();
             fetchVideoTitles();
+            fetchPlaylistDetails();
             updateCurrentVideo();
-            showNotification(`🎉 Loaded DSA playlist with ${list.length} lectures!`, 'success');
+            showNotification(`🎉 Loaded playlist with ${list.length} lectures!`, 'success');
+            // **FIX**: Removed unreliable setTimeout for resume from here.
           }
-        } catch { }
+        } catch {}
       }, 250);
     }
 
     function onPlayerStateChange(e) {
+      // **FIX**: This is the new, reliable resume logic.
+      // It triggers only on the very first 'PLAYING' event after the page loads.
+      if (e.data === YT.PlayerState.PLAYING && state.isInitialPlay) {
+        resumeVideoProgress();
+        state.isInitialPlay = false; // Prevent it from running again
+      }
+
       if (e.data === YT.PlayerState.PLAYING || e.data === YT.PlayerState.PAUSED) {
         updateCurrentVideo();
         updateStats();
         saveVideoProgress();
       }
       
-      // Auto-save progress every 10 seconds during playback
       if (e.data === YT.PlayerState.PLAYING) {
         const progressInterval = setInterval(() => {
           if (state.player.getPlayerState() === YT.PlayerState.PLAYING) {
@@ -1301,14 +1212,11 @@
     function buildPlaylist(filter = '') {
       const container = $('#playlistList');
       container.innerHTML = '';
-      
       const query = filter.toLowerCase().trim();
       
       state.ids.forEach((videoId, index) => {
         const rawTitle = state.titles[videoId] || `Video ${index + 1}`;
         const parsed = parseVideoTitle(rawTitle, index);
-        
-        // Filter logic
         const searchText = `${parsed.formattedTitle} ${parsed.shortTitle} ${rawTitle}`.toLowerCase();
         if (query && !searchText.includes(query)) return;
         
@@ -1320,34 +1228,15 @@
         item.className = `playlist-item ${isWatched ? 'watched' : ''} ${isInProgress ? 'in-progress' : ''}`;
         item.dataset.index = index;
         
-        // Create a truncated description for longer titles
-        const description = parsed.shortTitle.length > 50 
-          ? parsed.shortTitle.substring(0, 50) + '...'
-          : parsed.shortTitle;
+        const description = parsed.shortTitle.length > 50 ? parsed.shortTitle.substring(0, 50) + '...' : parsed.shortTitle;
         
-        item.innerHTML = `
-          <div class="lecture-index">${index + 1}</div>
-          <div class="lecture-content">
-            <div class="lecture-number-title">${parsed.formattedTitle}</div>
-            <div class="lecture-description">${description}</div>
-            <div class="lecture-meta-info">
-              <span>Coder Army</span>
-              ${progress ? `<span>⏱️ ${progress.percentage}% complete</span>` : '<span>🆕 New</span>'}
-              <span>🆔 ${videoId}</span>
-            </div>
-            <div class="progress-bar ${progress ? 'has-progress' : ''}">
-              <div class="progress-fill" style="width: ${progress ? progress.percentage : 0}%"></div>
-            </div>
-          </div>
-          <button class="reset-progress" onclick="resetVideoProgress(${index})" title="Reset Progress">🔄</button>
-        `;
+        item.innerHTML = `<div class="lecture-index">${index + 1}</div><div class="lecture-content"><div class="lecture-number-title">${parsed.formattedTitle}</div><div class="lecture-description">${description}</div><div class="lecture-meta-info"><span>Coder Army</span>${progress ? `<span>⏱️ ${progress.percentage}% complete</span>` : '<span>🆕 New</span>'}<span>🆔 ${videoId}</span></div><div class="progress-bar ${progress ? 'has-progress' : ''}"><div class="progress-fill" style="width: ${progress ? progress.percentage : 0}%"></div></div></div><button class="reset-progress" onclick="resetVideoProgress(${index})" title="Reset Progress">🔄</button>`;
         
         item.addEventListener('click', (e) => {
           if (e.target.classList.contains('reset-progress')) return;
           state.player.playVideoAt(index);
           showNotification(`🎬 Playing ${parsed.formattedTitle}`, 'info');
         });
-        
         container.appendChild(item);
       });
       
@@ -1357,24 +1246,18 @@
 
     function updateActivePlaylistItem() {
       const currentIndex = state.player?.getPlaylistIndex() ?? 0;
-      $$('.playlist-item').forEach((item, index) => {
+      $$('.playlist-item').forEach(item => {
         item.classList.toggle('active', parseInt(item.dataset.index) === currentIndex);
       });
     }
 
-    function updatePlaylistProgress() {
-      buildPlaylist($('#playlistSearch').value);
-    }
+    function updatePlaylistProgress() { buildPlaylist($('#playlistSearch').value); }
 
     function updatePlaylistCount() {
       const totalVideos = state.ids.length;
       const visibleVideos = $$('.playlist-item').length;
-      
-      if (visibleVideos === totalVideos) {
-        $('#playlistCount').textContent = `${totalVideos}/163`;
-      } else {
-        $('#playlistCount').textContent = `${visibleVideos} of ${totalVideos}/163`;
-      }
+      if (visibleVideos === totalVideos) { $('#playlistCount').textContent = `${totalVideos} videos`; } 
+      else { $('#playlistCount').textContent = `${visibleVideos} of ${totalVideos} videos`; }
     }
 
     // ---------- Video Information Updates ----------
@@ -1404,41 +1287,52 @@
       $('#currentVideo').textContent = current;
       $('#totalVideos').textContent = total;
       $('#completionPercent').textContent = `${completion}%`;
-      
       updateStudyTime();
     }
 
     function updateStudyTime() {
       const elapsed = Date.now() - state.sessionStart;
-      const hours = Math.floor(elapsed / (1000 * 60 * 60));
-      const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+      const hours = Math.floor(elapsed / 3600000);
+      const minutes = Math.floor((elapsed % 3600000) / 60000);
       $('#studyTime').textContent = `${hours}h ${minutes}m`;
     }
 
     // ---------- API Integration ----------
+    async function fetchPlaylistDetails() {
+      const apiKey = $('#apiKey').value.trim();
+      if (!apiKey || !state.playlistId) return;
+
+      try {
+        const url = `https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${state.playlistId}&key=${encodeURIComponent(apiKey)}`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('API request failed');
+        const data = await response.json();
+        if (data.items && data.items.length > 0) {
+          $('#playlistName').textContent = data.items[0].snippet.title;
+        }
+      } catch (error) {
+        console.warn('Failed to fetch playlist details:', error);
+        showNotification('❌ Failed to fetch playlist title', 'error');
+      }
+    }
+
     async function fetchVideoTitles() {
       const apiKey = $('#apiKey').value.trim();
       if (!apiKey || !state.ids.length) return;
-      
       showNotification('🔄 Fetching lecture titles...', 'info');
       
       try {
         for (let i = 0; i < state.ids.length; i += 50) {
           const chunk = state.ids.slice(i, i + 50).join(',');
           const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${chunk}&key=${encodeURIComponent(apiKey)}`;
-          
           const response = await fetch(url);
           if (!response.ok) throw new Error('API request failed');
-          
           const data = await response.json();
-          (data.items || []).forEach(item => {
-            state.titles[item.id] = item.snippet?.title || '';
-          });
+          (data.items || []).forEach(item => { state.titles[item.id] = item.snippet?.title || ''; });
         }
-        
         buildPlaylist($('#playlistSearch').value);
         updateCurrentVideo();
-        showNotification('✅ Lecture titles loaded successfully!', 'success');
+        showNotification('✅ Lecture titles loaded!', 'success');
       } catch (error) {
         console.warn('Failed to fetch video titles:', error);
         showNotification('❌ Failed to fetch video titles', 'error');
@@ -1447,75 +1341,27 @@
 
     // ---------- Todo Management ----------
     let todos = [];
-
-    function loadTodos() {
-      todos = loadFromStorage(STORAGE_KEYS.todos(state.playlistId), []);
-      renderTodos();
-    }
-
-    function saveTodos() {
-      saveToStorage(STORAGE_KEYS.todos(state.playlistId), todos);
-    }
-
+    function loadTodos() { todos = loadFromStorage(STORAGE_KEYS.todos(state.playlistId), []); renderTodos(); }
+    function saveTodos() { saveToStorage(STORAGE_KEYS.todos(state.playlistId), todos); }
     function addTodo() {
-      const input = $('#todoInput');
-      const text = input.value.trim();
-      
+      const input = $('#todoInput'); const text = input.value.trim();
       if (text) {
-        const currentIndex = state.player?.getPlaylistIndex() ?? 0;
-        todos.push({
-          id: crypto.randomUUID(),
-          text,
-          completed: false,
-          videoIndex: currentIndex,
-          timestamp: Date.now()
-        });
-        
-        input.value = '';
-        saveTodos();
-        renderTodos();
-        showNotification('✅ Note added!', 'success');
+        todos.push({ id: crypto.randomUUID(), text, completed: false, videoIndex: state.player?.getPlaylistIndex() ?? 0, timestamp: Date.now() });
+        input.value = ''; saveTodos(); renderTodos(); showNotification('✅ Note added!', 'success');
       }
     }
-
     function toggleTodo(id) {
       const todo = todos.find(t => t.id === id);
-      if (todo) {
-        todo.completed = !todo.completed;
-        saveTodos();
-        renderTodos();
-        showNotification(todo.completed ? '✅ Task completed!' : '📝 Task reopened', 'info');
-      }
+      if (todo) { todo.completed = !todo.completed; saveTodos(); renderTodos(); showNotification(todo.completed ? '✅ Task completed!' : '📝 Task reopened', 'info'); }
     }
-
-    function deleteTodo(id) {
-      todos = todos.filter(t => t.id !== id);
-      saveTodos();
-      renderTodos();
-      showNotification('🗑️ Note deleted', 'warning');
-    }
-
+    function deleteTodo(id) { todos = todos.filter(t => t.id !== id); saveTodos(); renderTodos(); showNotification('🗑️ Note deleted', 'warning'); }
     function renderTodos() {
-      const container = $('#todoList');
-      container.innerHTML = '';
-      
+      const container = $('#todoList'); container.innerHTML = '';
       todos.forEach(todo => {
-        const item = document.createElement('div');
-        item.className = `todo-item ${todo.completed ? 'done' : ''}`;
-        
-        item.innerHTML = `
-          <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''}>
-          <div class="todo-text">${todo.text}</div>
-          <small style="color: var(--muted); font-size: 11px;">L${todo.videoIndex + 1}</small>
-          <button class="todo-delete">🗑️</button>
-        `;
-        
-        const checkbox = item.querySelector('.todo-checkbox');
-        checkbox.addEventListener('change', () => toggleTodo(todo.id));
-        
-        const deleteBtn = item.querySelector('.todo-delete');
-        deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
-        
+        const item = document.createElement('div'); item.className = `todo-item ${todo.completed ? 'done' : ''}`;
+        item.innerHTML = `<input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''}><div class="todo-text">${todo.text}</div><small style="color: var(--muted); font-size: 11px;">L${todo.videoIndex + 1}</small><button class="todo-delete">🗑️</button>`;
+        item.querySelector('.todo-checkbox').addEventListener('change', () => toggleTodo(todo.id));
+        item.querySelector('.todo-delete').addEventListener('click', () => deleteTodo(todo.id));
         container.appendChild(item);
       });
     }
@@ -1523,123 +1369,55 @@
     // ---------- Theme Management ----------
     function initTheme() {
       const savedTheme = loadFromStorage(STORAGE_KEYS.theme, 'dark');
-      document.body.dataset.theme = savedTheme;
-      updateThemeButton();
+      document.body.dataset.theme = savedTheme; updateThemeButton();
     }
-
     function toggleTheme() {
-      const current = document.body.dataset.theme;
-      const newTheme = current === 'dark' ? 'light' : 'dark';
+      const newTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
       document.body.dataset.theme = newTheme;
-      saveToStorage(STORAGE_KEYS.theme, newTheme);
-      updateThemeButton();
+      saveToStorage(STORAGE_KEYS.theme, newTheme); updateThemeButton();
       showNotification(`Switched to ${newTheme} mode`, 'success');
     }
-
-    function updateThemeButton() {
-      const isDark = document.body.dataset.theme === 'dark';
-      $('#themeToggle').textContent = isDark ? '🌙' : '☀️';
-    }
+    function updateThemeButton() { $('#themeToggle').textContent = document.body.dataset.theme === 'dark' ? '🌙' : '☀️'; }
 
     // ---------- Event Listeners ----------
     function setupEventListeners() {
-      // Header controls
       $('#loadPl').addEventListener('click', () => {
         const playlistId = $('#playlistId').value.trim();
         if (playlistId) {
+          state.isInitialPlay = true; // **FIX**: Reset flag for new playlist
           createPlayer(playlistId);
-          showNotification('🔄 Loading DSA playlist...', 'info');
+          showNotification('🔄 Loading new playlist...', 'info');
         }
       });
       
       $('#themeToggle').addEventListener('click', toggleTheme);
-      
-      // Video controls
-      $('#prevBtn').addEventListener('click', () => {
-        state.player.previousVideo();
-        showNotification('⏮️ Previous lecture', 'info');
-      });
-      
-      $('#nextBtn').addEventListener('click', () => {
-        state.player.nextVideo();
-        showNotification('⏭️ Next lecture', 'info');
-      });
-      
+      $('#prevBtn').addEventListener('click', () => state.player.previousVideo());
+      $('#nextBtn').addEventListener('click', () => state.player.nextVideo());
       $('#resumeBtn').addEventListener('click', resumeVideoProgress);
       $('#resetVideoProgress').addEventListener('click', () => resetVideoProgress());
       
       $('#jumpBtn').addEventListener('click', () => {
-        const lectureNum = parseInt($('#jumpInput').value);
-        if (lectureNum >= 1 && lectureNum <= state.ids.length) {
-          state.player.playVideoAt(lectureNum - 1);
-          showNotification(`🚀 Jumped to Lecture ${lectureNum.toString().padStart(2, '0')}!`, 'success');
-          $('#jumpInput').value = '';
-        } else {
-          showNotification(`❌ Enter a lecture number between 1 and ${state.ids.length}`, 'error');
-        }
+        const num = parseInt($('#jumpInput').value);
+        if (num >= 1 && num <= state.ids.length) { state.player.playVideoAt(num - 1); $('#jumpInput').value = ''; } 
+        else { showNotification(`❌ Enter a lecture number between 1 and ${state.ids.length}`, 'error'); }
       });
       
-      $('#jumpInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          $('#jumpBtn').click();
-        }
-      });
-      
-      // Timer controls
+      $('#jumpInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') $('#jumpBtn').click(); });
       $('#timerStart').addEventListener('click', startTimer);
       $('#timerPause').addEventListener('click', pauseTimer);
       $('#timerReset').addEventListener('click', resetTimer);
-      
-      // Timer presets
-      $$('.timer-preset').forEach(preset => {
-        preset.addEventListener('click', () => {
-          $$('.timer-preset').forEach(p => p.classList.remove('active'));
-          preset.classList.add('active');
-          resetTimer();
-        });
-      });
-      
-      // Playlist search
-      $('#playlistSearch').addEventListener('input', (e) => {
-        buildPlaylist(e.target.value);
-      });
-      
-      // Todo controls
+      $$('.timer-preset').forEach(p => p.addEventListener('click', () => { $$('.timer-preset').forEach(el => el.classList.remove('active')); p.classList.add('active'); resetTimer(); }));
+      $('#playlistSearch').addEventListener('input', (e) => buildPlaylist(e.target.value));
       $('#todoAdd').addEventListener('click', addTodo);
-      $('#todoInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          addTodo();
-        }
-      });
+      $('#todoInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') addTodo(); });
       
-      // Keyboard shortcuts
-      document.addEventListener('keydown', (e) => {
-        if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-        
-        switch (e.key.toLowerCase()) {
-          case 'n':
-            $('#nextBtn').click();
-            break;
-          case 'p':
-            $('#prevBtn').click();
-            break;
-          case 'j':
-            $('#jumpInput').focus();
-            break;
-          case 'r':
-            $('#resumeBtn').click();
-            break;
-          case 't':
-            toggleTheme();
-            break;
-          case ' ':
-            e.preventDefault();
-            if (state.timerRunning) {
-              pauseTimer();
-            } else {
-              startTimer();
-            }
-            break;
+      // **FIX**: Save progress when the tab is closed
+      window.addEventListener('beforeunload', () => {
+        if (state.player && typeof state.player.getPlayerState === 'function') {
+          const playerState = state.player.getPlayerState();
+          if (playerState === YT.PlayerState.PLAYING || playerState === YT.PlayerState.PAUSED) {
+            saveVideoProgress();
+          }
         }
       });
     }
@@ -1651,30 +1429,15 @@
       loadTodos();
       setupEventListeners();
       
-      // Start study time tracking
       state.studyTimeInterval = setInterval(updateStudyTime, 60000);
       updateStudyTime();
       
-      // Auto-save progress periodically
-      setInterval(() => {
-        if (state.player && state.player.getPlayerState() === YT.PlayerState.PLAYING) {
-          saveVideoProgress();
-        }
-      }, 30000);
+      setInterval(() => { if (state.player && state.player.getPlayerState() === YT.PlayerState.PLAYING) saveVideoProgress(); }, 30000);
       
-      showNotification('🎉 Welcome to DSA Learning with StudyTube Pro!', 'success');
+      createPlayer(state.playlistId); // Load the initial playlist
+      showNotification('🎉 Welcome back to StudyTube Pro!', 'success');
     }
 
-    // Initialize when DOM is ready
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
-        // YouTube API not loaded yet, wait for it
-        return;
-      }
-      initializeApp();
-    });
-
-    // Global function for reset buttons
     window.resetVideoProgress = resetVideoProgress;
   </script>
 </body>
