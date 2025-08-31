@@ -1,1445 +1,373 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DSA Here by HS</title>
+  <title>StudyTube Pro — DSA Learning Platform</title>
   <link rel="icon" type="image/png" href="new.png">
-  <style>
-    :root {
-      --bg: #0f1220;
-      --panel: #171a2a;
-      --muted: #8892b0;
-      --text: #e6e8f3;
-      --accent: #7aa2f7;
-      --accent2: #00d3a7;
-      --danger: #ff6b6b;
-      --warning: #fbbf24;
-      --success: #10b981;
-      --radius: 16px;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --glow: 0 0 20px rgba(122, 162, 247, 0.3);
-    }
-    
-    [data-theme="light"] {
-      --bg: #f8fafc;
-      --panel: #ffffff;
-      --muted: #64748b;
-      --text: #1e293b;
-      --accent: #3b82f6;
-      --accent2: #059669;
-      --danger: #dc2626;
-      --warning: #d97706;
-      --success: #059669;
-      --shadow: 0 10px 30px rgba(0,0,0,.1);
-      --glow: 0 0 20px rgba(59, 130, 246, 0.2);
-    }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    
-    body {
-      margin: 0;
-      background: linear-gradient(180deg, var(--bg), #0b0e1a);
-      color: var(--text);
-      font: 14px/1.4 'Segoe UI', system-ui, -apple-system, sans-serif;
-      transition: all 0.3s ease;
-    }
-    
-    [data-theme="light"] body {
-      background: linear-gradient(180deg, var(--bg), #e2e8f0);
-    }
-
-    .wrap {
-      display: grid;
-      grid-template-columns: 1fr 420px;
-      gap: 20px;
-      padding: 20px;
-      max-width: 1600px;
-      margin: auto;
-      min-height: 100vh;
-    }
-
-    /* Animations */
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    .animate-in { animation: slideIn 0.5s ease; }
-
-    /* Header */
-    header {
-      grid-column: 1/-1;
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--panel);
-      padding: 20px 24px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      flex-wrap: wrap;
-    }
-
-    .logo {
-      font-size: 20px;
-      font-weight: 800;
-      background: linear-gradient(45deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .header-controls {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .pill {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      background: rgba(12, 16, 32, 0.8);
-      backdrop-filter: blur(10px);
-      border: 1px solid #222741;
-      color: var(--text);
-      padding: 10px 16px;
-      border-radius: 999px;
-      transition: all 0.3s ease;
-    }
-    
-    .pill:hover {
-      border-color: var(--accent);
-      box-shadow: var(--glow);
-    }
-
-    .pill input {
-      background: transparent;
-      border: none;
-      outline: none;
-      color: var(--text);
-      min-width: 180px;
-    }
-
-    .pill button {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .pill button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(122, 162, 247, 0.4);
-    }
-
-    .pill button.secondary {
-      background: #222741;
-      color: var(--text);
-    }
-
-    .theme-toggle {
-      background: var(--accent);
-      border: none;
-      color: white;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      transition: all 0.3s ease;
-    }
-    
-    .theme-toggle:hover {
-      transform: rotate(180deg);
-      box-shadow: var(--glow);
-    }
-
-    /* Clock Section */
-    .clock-section {
-      background: var(--panel);
-      border: 1px solid #222741;
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 20px;
-      text-align: center;
-      box-shadow: var(--shadow);
-    }
-
-    .digital-clock {
-      font-size: 2.5em;
-      font-weight: 800;
-      color: var(--accent);
-      font-family: 'Courier New', monospace;
-      text-shadow: 0 0 10px rgba(122, 162, 247, 0.3);
-      margin-bottom: 8px;
-    }
-
-    .date-display {
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    /* Timer Section */
-    .timer-section {
-      background: var(--panel);
-      border: 1px solid #222741;
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 20px;
-      text-align: center;
-      box-shadow: var(--shadow);
-    }
-
-    .timer-display {
-      font-size: 2.2em;
-      font-weight: 800;
-      color: var(--accent2);
-      margin-bottom: 16px;
-      font-family: 'Courier New', monospace;
-    }
-
-    .timer-controls {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .timer-controls button {
-      padding: 10px 16px;
-      border-radius: 8px;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 13px;
-    }
-
-    .timer-start { background: var(--success); color: white; }
-    .timer-pause { background: var(--warning); color: white; }
-    .timer-reset { background: var(--danger); color: white; }
-
-    .timer-presets {
-      display: flex;
-      gap: 6px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .timer-preset {
-      background: #222741;
-      color: var(--text);
-      border: 1px solid #2a304f;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      transition: all 0.3s ease;
-    }
-
-    .timer-preset:hover, .timer-preset.active {
-      background: var(--accent);
-      color: white;
-    }
-
-    /* Player Section */
-    .player-section {
-      background: var(--panel);
-      border: 1px solid #222741;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .stats-bar {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: white;
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .stat-item {
-      text-align: center;
-    }
-
-    .stat-value {
-      font-size: 18px;
-      font-weight: 800;
-      display: block;
-    }
-
-    .video-info {
-      padding: 20px;
-      border-bottom: 1px solid #222741;
-      background: rgba(122, 162, 247, 0.05);
-    }
-
-    .video-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 8px;
-      line-height: 1.3;
-    }
-
-    .video-meta {
-      color: var(--muted);
-      font-size: 13px;
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-
-    .progress-info {
-      background: rgba(0, 211, 167, 0.1);
-      border: 1px solid rgba(0, 211, 167, 0.3);
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      color: var(--accent2);
-      font-weight: 600;
-      display: inline-block;
-    }
-
-    .video-controls {
-      padding: 16px 20px;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      border-bottom: 1px solid #222741;
-    }
-
-    .control-group {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .control-btn {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .control-btn:hover {
-      background: var(--accent2);
-      transform: translateY(-2px);
-    }
-
-    .control-btn.danger {
-      background: var(--danger);
-    }
-
-    .control-btn.secondary {
-      background: #222741;
-      border: 1px solid #2a304f;
-    }
-
-    .jump-input {
-      width: 80px;
-      padding: 8px 12px;
-      border: 1px solid #2a304f;
-      border-radius: 6px;
-      background: var(--bg);
-      color: var(--text);
-      text-align: center;
-    }
-
-    .player-container {
-      padding: 20px;
-    }
-
-    .player {
-      aspect-ratio: 16/9;
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-    }
-
-    /* Enhanced Sidebar */
-    .sidebar {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    /* YouTube-style Playlist Section */
-    .playlist-section {
-      background: var(--panel);
-      border: 1px solid #222741;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      height: 700px;
-    }
-
-    .playlist-header {
-      padding: 20px;
-      border-bottom: 1px solid #222741;
-      background: rgba(122, 162, 247, 0.05);
-    }
-
-    .playlist-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--text);
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .playlist-subtitle {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 16px;
-    }
-
-    .playlist-search {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #2a304f;
-      border-radius: 8px;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 14px;
-    }
-
-    .playlist-search:focus {
-      border-color: var(--accent);
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(122, 162, 247, 0.2);
-    }
-
-    .playlist-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 0;
-    }
-
-    /* YouTube-style Playlist Item */
-    .playlist-item {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      padding: 12px 16px;
-      border-bottom: 1px solid rgba(34, 39, 65, 0.5);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      background: transparent;
-    }
-
-    .playlist-item:hover {
-      background: rgba(122, 162, 247, 0.08);
-    }
-
-    .playlist-item.active {
-      background: rgba(122, 162, 247, 0.15);
-      border-left: 4px solid var(--accent);
-    }
-
-    .playlist-item.watched {
-      opacity: 0.8;
-    }
-
-    .playlist-item.watched::before {
-      content: '✓';
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: var(--success);
-      color: white;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .playlist-item.in-progress::before {
-      content: '▶';
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: var(--warning);
-      color: white;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: bold;
-    }
-
-    .lecture-index {
-      background: rgba(122, 162, 247, 0.2);
-      color: var(--accent);
-      min-width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 12px;
-      flex-shrink: 0;
-      margin-top: 4px;
-    }
-
-    .active .lecture-index {
-      background: var(--accent);
-      color: white;
-      animation: pulse 2s infinite;
-    }
-
-    .lecture-content {
-      flex: 1;
-      min-width: 0;
-      padding-right: 24px;
-    }
-
-    .lecture-number-title {
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 1.4;
-      margin-bottom: 4px;
-      color: var(--text);
-      word-wrap: break-word;
-    }
-
-    .lecture-description {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.3;
-      margin-bottom: 6px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .lecture-meta-info {
-      font-size: 11px;
-      color: var(--muted);
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 3px;
-      background: rgba(34, 39, 65, 0.8);
-      border-radius: 2px;
-      overflow: hidden;
-      margin-top: 6px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .playlist-item:hover .progress-bar,
-    .playlist-item.active .progress-bar,
-    .progress-bar.has-progress {
-      opacity: 1;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      border-radius: 2px;
-      transition: width 0.3s ease;
-    }
-
-    .reset-progress {
-      position: absolute;
-      top: 12px;
-      right: 32px;
-      background: var(--danger);
-      color: white;
-      border: none;
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 11px;
-      opacity: 0;
-      transition: all 0.3s ease;
-      z-index: 10;
-    }
-
-    .playlist-item:hover .reset-progress {
-      opacity: 0.8;
-    }
-
-    .reset-progress:hover {
-      opacity: 1 !important;
-      transform: scale(1.1);
-    }
-
-    /* Todo Section */
-    .todo-section {
-      background: var(--panel);
-      border: 1px solid #222741;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      height: 400px;
-    }
-
-    .todo-header {
-      padding: 20px;
-      border-bottom: 1px solid #222741;
-      background: rgba(0, 211, 167, 0.05);
-    }
-
-    .todo-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .todo-form {
-      display: flex;
-      gap: 8px;
-    }
-
-    .todo-input {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1px solid #2a304f;
-      border-radius: 8px;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 14px;
-    }
-
-    .todo-add {
-      background: var(--accent2);
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .todo-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 8px;
-    }
-
-    .todo-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      margin-bottom: 8px;
-      background: rgba(12, 16, 32, 0.3);
-      border: 1px solid #222741;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-    }
-
-    .todo-item:hover {
-      background: rgba(0, 211, 167, 0.05);
-    }
-
-    .todo-checkbox {
-      transform: scale(1.3);
-      accent-color: var(--accent2);
-    }
-
-    .todo-text {
-      flex: 1;
-      font-size: 14px;
-      line-height: 1.3;
-    }
-
-    .todo-item.done .todo-text {
-      text-decoration: line-through;
-      opacity: 0.6;
-    }
-
-    .todo-delete {
-      background: var(--danger);
-      color: white;
-      border: none;
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    /* Notifications */
-    .notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: var(--panel);
-      color: var(--text);
-      padding: 16px 20px;
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-      border-left: 4px solid var(--accent);
-      z-index: 9999;
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-      max-width: 350px;
-    }
-    
-    .notification.show {
-      transform: translateX(0);
-    }
-    
-    .notification.success { border-left-color: var(--success); }
-    .notification.warning { border-left-color: var(--warning); }
-    .notification.error { border-left-color: var(--danger); }
-
-    /* Responsive */
-    @media (max-width: 1200px) {
-      .wrap {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
-      
-      .sidebar {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-      }
-      
-      .playlist-section {
-        height: 600px;
-      }
-      
-      .todo-section {
-        height: 400px;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .wrap {
-        padding: 12px;
-        grid-template-columns: 1fr;
-      }
-      
-      .sidebar {
-        grid-template-columns: 1fr;
-      }
-      
-      .header-controls {
-        width: 100%;
-        justify-content: center;
-      }
-      
-      .pill input {
-        min-width: 120px;
-      }
-    }
-
-    /* Enhanced Scrollbar */
-    .playlist-list::-webkit-scrollbar,
-    .todo-list::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .playlist-list::-webkit-scrollbar-track,
-    .todo-list::-webkit-scrollbar-track {
-      background: var(--bg);
-      border-radius: 4px;
-      margin: 4px;
-    }
-
-    .playlist-list::-webkit-scrollbar-thumb,
-    .todo-list::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border-radius: 4px;
-    }
-
-    .playlist-list::-webkit-scrollbar-thumb:hover,
-    .todo-list::-webkit-scrollbar-thumb:hover {
-      background: var(--accent2);
-    }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body data-theme="dark">
-  <div class="wrap">
-    <header class="animate-in">
-      <div class="logo">
-        <span>🎓</span>
-        <span>StudyTube Pro</span>
-        <span style="font-size: 14px; color: var(--muted);">- DSA Learning Platform</span>
+<body>
+  <!-- Live background -->
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+  <div id="app">
+    <!-- Global notifications -->
+    <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Top App Bar -->
+    <header class="topbar surface blur">
+      <div class="topbar-left">
+        <a class="brand" href="#" aria-label="StudyTube Pro">
+          <!-- Code-oriented SVG logo -->
+          <svg class="brand-logo" width="34" height="34" viewBox="0 0 48 48" aria-hidden="true">
+            <defs>
+              <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stop-color="#00e676"/>
+                <stop offset="100%" stop-color="#14f195"/>
+              </linearGradient>
+            </defs>
+            <rect x="2" y="2" width="44" height="44" rx="10" fill="rgba(0,230,118,0.12)" stroke="#153226"/>
+            <path d="M16 30 L8 24 L16 18" stroke="url(#g)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M32 18 L40 24 L32 30" stroke="url(#g)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="21" y="21" width="6" height="6" rx="2" fill="url(#g)"/>
+          </svg>
+          <div class="brand-text">
+            <strong>StudyTube</strong><span class="muted">/Pro</span>
+          </div>
+        </a>
+        <div class="breadcrumb only-desktop">
+          <span>courses</span>
+          <span class="sep">/</span>
+          <span id="crumbCourse">dsa-in-cpp</span>
+        </div>
       </div>
-      <div class="header-controls">
-        <div class="pill">
-          <span>📚 Playlist ID</span>
-          <input id="playlistId" value="PLQEaRBV9gAFu4ovJ41PywklqI7IyXwr01" />
-          <button id="loadPl">Load</button>
+
+      <div class="topbar-center">
+        <div class="search">
+          <span class="icon">⌕</span>
+          <input id="globalSearch" placeholder="grep lectures | grep notes" aria-label="Global search" />
+          <kbd class="hint">/</kbd>
         </div>
-        <div class="pill">
-          <span>🔑 API Key</span>
-          <input id="apiKey" placeholder="YouTube Data API v3 key" />
-        </div>
-        <button class="theme-toggle" id="themeToggle" title="Toggle Theme">🌙</button>
+      </div>
+
+      <div class="topbar-right">
+        <button id="bgModeToggle" class="icon-btn" title="Toggle background mode" aria-label="Toggle background">BG: Off</button>
+        <button id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">◐</button>
+        <button class="btn strong" id="openSettings">Settings</button>
       </div>
     </header>
 
-    <main class="main-content">
-      <section class="player-section animate-in">
-        <div class="stats-bar">
-          <div class="stat-item">
-            <span class="stat-value" id="currentVideo">1</span>
-            <span>Current</span>
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="sidebar surface" id="sidebarNav" aria-label="Primary">
+        <nav class="nav">
+          <div class="nav-section">
+            <div class="nav-label">course</div>
+            <button class="nav-item active" data-tab="overview">~/overview</button>
+            <button class="nav-item" data-tab="curriculum">~/curriculum</button>
+            <button class="nav-item" data-tab="notes">~/notes</button>
           </div>
-          <div class="stat-item">
-            <span class="stat-value" id="totalVideos">—</span>
-            <span>Total</span>
+          <div class="nav-section">
+            <div class="nav-label">utils</div>
+            <button class="nav-item" id="focusTimerNav">⏱ focus-timer</button>
+            <button class="nav-item danger" id="resetAllData">rm -rf course-data</button>
           </div>
-          <div class="stat-item">
-            <span class="stat-value" id="completionPercent">0%</span>
-            <span>Complete</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value" id="studyTime">0h 0m</span>
-            <span>Study Time</span>
-          </div>
-        </div>
-        
-        <div class="video-info">
-          <div class="video-title" id="videoTitle">🎬 Loading DSA content...</div>
-          <div class="video-meta">
-            <span id="videoMeta">✨ Get ready to master Data Structures & Algorithms!</span>
-          </div>
-          <div class="progress-info" id="videoProgress">No progress saved</div>
-        </div>
-        
-        <div class="video-controls">
-          <div class="control-group">
-            <button class="control-btn" id="prevBtn">⏮️ Previous</button>
-            <button class="control-btn" id="nextBtn">Next ⏭️</button>
-            <button class="control-btn secondary" id="resumeBtn">📍 Resume</button>
-          </div>
-          
-          <div class="control-group">
-            <span>Jump to:</span>
-            <input type="number" class="jump-input" id="jumpInput" min="1" placeholder="Lec #">
-            <button class="control-btn" id="jumpBtn">Go</button>
-          </div>
-          
-          <div class="control-group">
-            <button class="control-btn danger" id="resetVideoProgress">🔄 Reset Progress</button>
+        </nav>
+        <div class="sidebar-footer">
+          <div class="mini-clock">
+            <div id="digitalClock">00:00:00</div>
+            <div id="dateDisplay" class="muted">Loading...</div>
           </div>
         </div>
-        
-        <div class="player-container">
-          <div id="player" class="player"></div>
-        </div>
-      </section>
-    </main>
+      </aside>
 
-    <aside class="sidebar">
-      <section class="clock-section animate-in">
-        <div class="digital-clock" id="digitalClock">00:00:00</div>
-        <div class="date-display" id="dateDisplay">Loading...</div>
-      </section>
-
-      <section class="timer-section animate-in">
-        <h3>⏱️ Study Timer</h3>
-        <div class="timer-display" id="timerDisplay">25:00</div>
-        <div class="timer-controls">
-          <button class="timer-start" id="timerStart">▶️ Start</button>
-          <button class="timer-pause" id="timerPause">⏸️ Pause</button>
-          <button class="timer-reset" id="timerReset">🔄 Reset</button>
-        </div>
-        <div class="timer-presets">
-          <div class="timer-preset active" data-minutes="25">25m Pomodoro</div>
-          <div class="timer-preset" data-minutes="15">15m Short</div>
-          <div class="timer-preset" data-minutes="45">45m Focus</div>
-          <div class="timer-preset" data-minutes="60">1h Deep</div>
-        </div>
-      </section>
-
-      <section class="playlist-section animate-in">
-        <div class="playlist-header">
-          <div class="playlist-title">
-            <span>📚</span>
-            <span id="playlistName">DSA Playlist in C++</span>
+      <!-- Content -->
+      <main class="content">
+        <!-- Hero -->
+        <section class="hero surface">
+          <div class="hero-left">
+            <h1 id="courseTitle"><span class="mono">$</span> DSA Playlist in C++</h1>
+            <div class="sub meta">
+              <span>author: <strong>Coder Army</strong></span>
+              <span class="dot">•</span>
+              <span id="playlistCount">— videos</span>
+              <span class="dot">•</span>
+              <span id="courseLevel">level: all</span>
+            </div>
+            <div class="hero-stats">
+              <div class="stat">
+                <div class="value mono" id="currentVideo">1</div>
+                <div class="label">current</div>
+              </div>
+              <div class="stat">
+                <div class="value mono" id="totalVideos">—</div>
+                <div class="label">total</div>
+              </div>
+              <div class="stat">
+                <div class="value mono" id="completionPercent">0%</div>
+                <div class="label">completed</div>
+              </div>
+              <div class="stat">
+                <div class="value mono" id="studyTime">0h 0m</div>
+                <div class="label">study-time</div>
+              </div>
+              <div class="stat">
+                <div class="value mono" id="streakValue">0</div>
+                <div class="label">streak</div>
+              </div>
+            </div>
           </div>
-          <div class="playlist-subtitle">Coder Army • <span id="playlistCount">Loading...</span></div>
-          <input type="text" class="playlist-search" id="playlistSearch" placeholder="🔍 Search lectures...">
-        </div>
-        <div class="playlist-list" id="playlistList">
-        </div>
-      </section>
+          <div class="hero-right">
+            <div class="pill-group">
+              <div class="pill">
+                <span class="mono">playlist_id</span>
+                <input id="playlistId" value="PLQEaRBV9gAFu4ovJ41PywklqI7IyXwr01" />
+              </div>
+              <div class="pill">
+                <span class="mono">api_key</span>
+                <input id="apiKey" placeholder="YouTube Data API v3 key" />
+              </div>
+              <button id="loadPl" class="btn strong">Load</button>
+            </div>
+          </div>
+        </section>
 
-      <section class="todo-section animate-in">
-        <div class="todo-header">
-          <div class="todo-title">
-            <span>✅</span>
-            <span>Study Notes & Tasks</span>
+        <!-- Grid -->
+        <section class="grid two-cols">
+          <div class="col">
+            <!-- Player -->
+            <section class="card player-card surface">
+              <div class="player-shell">
+                <div id="player" class="player"></div>
+                <div class="player-overlay" id="miniPlayer">
+                  <div class="mini-info">
+                    <div class="mini-title mono" id="miniTitle">Loading...</div>
+                    <div class="mini-meta" id="miniMeta">—</div>
+                  </div>
+                  <div class="mini-controls">
+                    <button class="icon-btn" id="miniPrev" title="Previous">⏮</button>
+                    <button class="icon-btn" id="miniPlayPause" title="Play/Pause">⏯</button>
+                    <button class="icon-btn" id="miniNext" title="Next">⏭</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="video-panel">
+                <div class="video-info">
+                  <div class="title mono" id="videoTitle">> Loading DSA content...</div>
+                  <div class="meta" id="videoMeta">Get ready to master Data Structures & Algorithms.</div>
+                  <div class="progress-info" id="videoProgress">No progress saved</div>
+                </div>
+                <div class="video-controls">
+                  <div class="control-group">
+                    <button class="btn" id="prevBtn">⏮ prev</button>
+                    <button class="btn" id="nextBtn">next ⏭</button>
+                    <button class="btn ghost" id="resumeBtn">📍 resume</button>
+                    <button class="btn warning ghost" id="markDoneBtn">✓ mark done</button>
+                    <button class="btn danger ghost" id="resetVideoProgress">↺ reset</button>
+                  </div>
+                  <div class="control-group">
+                    <span class="muted mono">jump →</span>
+                    <input type="number" class="input small mono" id="jumpInput" min="1" placeholder="lec #" />
+                    <button class="btn" id="jumpBtn">go</button>
+                  </div>
+                  <div class="control-group">
+                    <span class="muted mono">speed</span>
+                    <select id="playbackRate" class="input small mono">
+                      <option value="0.75">0.75x</option>
+                      <option value="1" selected>1x</option>
+                      <option value="1.25">1.25x</option>
+                      <option value="1.5">1.5x</option>
+                      <option value="1.75">1.75x</option>
+                      <option value="2">2x</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Tabs -->
+            <section class="tabs surface">
+              <div class="tabbar">
+                <button class="tab active" data-tab="overview">overview</button>
+                <button class="tab" data-tab="curriculum">curriculum</button>
+                <button class="tab" data-tab="notes">notes</button>
+              </div>
+
+              <div class="tabpanel active" id="tab-overview">
+                <div class="overview">
+                  <div class="overview-block">
+                    <h3 class="mono">about()</h3>
+                    <p>Master Data Structures and Algorithms in C++ with a structured, project‑ready curriculum. Track progress, add timestamped notes, and stay focused with an integrated Pomodoro timer.</p>
+                    <ul class="bullets">
+                      <li>Structured curriculum with resume support</li>
+                      <li>Accurate progress tracking across sessions</li>
+                      <li>Timestamped notes per lecture</li>
+                      <li>Focus timer with presets and toasts</li>
+                      <li>Dark/Light theme + keyboard shortcuts</li>
+                    </ul>
+                  </div>
+                  <div class="overview-grid">
+                    <div class="kpi">
+                      <div class="kpi-label">watched</div>
+                      <div class="kpi-value mono" id="kpiWatched">0</div>
+                    </div>
+                    <div class="kpi">
+                      <div class="kpi-label">in_progress</div>
+                      <div class="kpi-value mono" id="kpiInProgress">0</div>
+                    </div>
+                    <div class="kpi">
+                      <div class="kpi-label">unwatched</div>
+                      <div class="kpi-value mono" id="kpiUnwatched">—</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tabpanel" id="tab-curriculum">
+                <div class="curriculum-header">
+                  <div class="search">
+                    <span class="icon">⌕</span>
+                    <input id="playlistSearch" placeholder="search lectures..." />
+                  </div>
+                  <div class="filters">
+                    <button class="chip active" data-filter="all">all</button>
+                    <button class="chip" data-filter="unwatched">unwatched</button>
+                    <button class="chip" data-filter="progress">in-progress</button>
+                    <button class="chip" data-filter="watched">completed</button>
+                  </div>
+                </div>
+                <!-- Scroll-based curriculum box -->
+                <div class="playlist-scroll">
+                  <div class="playlist" id="playlistList" aria-live="polite"></div>
+                </div>
+              </div>
+
+              <div class="tabpanel" id="tab-notes">
+                <div class="notes">
+                  <div class="note-form">
+                    <input type="text" id="todoInput" class="input mono" placeholder="add note or task…" />
+                    <button class="btn ghost" id="addTimestamp">[ts]</button>
+                    <button class="btn" id="todoAdd">➕ add</button>
+                  </div>
+                  <div class="note-list" id="todoList"></div>
+                </div>
+              </div>
+            </section>
           </div>
-          <div class="todo-form">
-            <input type="text" class="todo-input" id="todoInput" placeholder="Add a note or task...">
-            <button class="todo-add" id="todoAdd">➕</button>
+
+          <!-- Right rail -->
+          <div class="col right">
+            <section class="card surface">
+              <h3 class="mono">progress</h3>
+              <div class="progress-line">
+                <div class="progress-line-fill" id="courseProgressFill" style="width: 0%"></div>
+              </div>
+              <div class="progress-meta">
+                <span id="courseProgressLabel">0% complete</span>
+                <div class="actions">
+                  <button class="btn ghost danger" id="resetCourseProgress">reset</button>
+                </div>
+              </div>
+              <div class="badges">
+                <span class="badge" id="badgeStarter">starter</span>
+                <span class="badge" id="badgeFocused">focused</span>
+                <span class="badge" id="badgeAchiever">achiever</span>
+              </div>
+            </section>
+
+            <section class="card surface">
+              <div class="card-head">
+                <h3 class="mono">focus_timer</h3>
+              </div>
+              <div class="timer-display mono" id="timerDisplay">25:00</div>
+              <div class="timer-controls">
+                <button class="btn success" id="timerStart">start</button>
+                <button class="btn warning" id="timerPause">pause</button>
+                <button class="btn danger ghost" id="timerReset">reset</button>
+              </div>
+              <div class="timer-presets">
+                <button class="chip active" data-minutes="25">25m</button>
+                <button class="chip" data-minutes="15">15m</button>
+                <button class="chip" data-minutes="45">45m</button>
+                <button class="chip" data-minutes="60">60m</button>
+              </div>
+            </section>
+
+            <section class="card surface">
+              <h3 class="mono">stats</h3>
+              <ul class="mini-stats">
+                <li><span>last_watched</span><strong id="lastWatched">—</strong></li>
+                <li><span>playback_rate</span><strong id="speedStat">1x</strong></li>
+                <li><span>session_time</span><strong id="sessionTime">0m</strong></li>
+              </ul>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <dialog id="settingsModal" class="modal surface">
+      <div class="modal-head">
+        <h3 class="mono">settings</h3>
+        <button class="icon-btn" id="closeSettings" aria-label="Close">✖</button>
+      </div>
+      <div class="modal-body">
+        <div class="grid two-cols">
+          <div class="col">
+            <label class="label mono">playlist_id</label>
+            <input id="mPlaylistId" class="input mono" placeholder="YouTube playlist ID" />
+          </div>
+          <div class="col">
+            <label class="label mono">api_key</label>
+            <input id="mApiKey" class="input mono" placeholder="YouTube Data API v3 key" />
           </div>
         </div>
-        <div class="todo-list" id="todoList">
+        <div class="grid two-cols">
+          <div class="col">
+            <label class="label mono">default_speed</label>
+            <select id="mDefaultSpeed" class="input mono">
+              <option>0.75</option>
+              <option selected>1</option>
+              <option>1.25</option>
+              <option>1.5</option>
+              <option>1.75</option>
+              <option>2</option>
+            </select>
+          </div>
+          <div class="col">
+            <label class="label mono">theme</label>
+            <select id="mTheme" class="input mono">
+              <option value="dark" selected>dark</option>
+              <option value="light">light</option>
+            </select>
+          </div>
         </div>
-      </section>
-    </aside>
+        <div class="grid">
+          <div class="col">
+            <label class="label mono">data</label>
+            <div class="settings-row">
+              <button class="btn" id="exportData">export</button>
+              <label class="btn ghost" style="cursor:pointer">
+                import
+                <input type="file" id="importData" accept="application/json" hidden />
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn ghost" id="settingsCancel">cancel</button>
+        <button class="btn strong" id="settingsSave">save</button>
+      </div>
+    </dialog>
   </div>
 
-  <script>
-    // ---------- Enhanced State Management ----------
-    const $ = (sel, root = document) => root.querySelector(sel);
-    const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-
-    const state = {
-      playlistId: 'PLQEaRBV9gAFu4ovJ41PywklqI7IyXwr01',
-      apiKey: '',
-      ids: [],
-      titles: {},
-      player: null,
-      currentIndex: 0,
-      sessionStart: Date.now(),
-      timerSeconds: 1500, // 25 minutes
-      timerInterval: null,
-      timerRunning: false,
-      clockInterval: null,
-      studyTimeInterval: null,
-      videoProgress: {}, // Store progress for each video
-      isInitialPlay: true, // **FIX**: Flag to handle the first playback event for resuming
-    };
-
-    // Storage keys
-    const STORAGE_KEYS = {
-      playlist: (pid) => `studytube-pro:playlist:${pid}`,
-      progress: (pid) => `studytube-pro:progress:${pid}`,
-      todos: (pid) => `studytube-pro:todos:${pid}`,
-      theme: 'studytube-pro:theme',
-      lastVideoIndex: (pid) => `studytube-pro:last-video-index:${pid}`, 
-    };
-
-    // ---------- Enhanced Video Title Parsing ----------
-    function parseVideoTitle(title, index) {
-      // This function remains the same
-      let cleanTitle = title
-        .replace(/^(DSA Playlist in C\+\+\s*[-|:]?\s*)/i, '')
-        .replace(/^(Coder Army\s*[-|:]?\s*)/i, '')
-        .replace(/^(Data Structures?\s*[-|:]?\s*)/i, '')
-        .replace(/^(Algorithm\s*[-|:]?\s*)/i, '')
-        .trim();
-      const patterns = [/^Lecture\s*(\d+)\s*:\s*(.+)$/i,/^Lec\s*(\d+)\s*:\s*(.+)$/i,/^(\d+)\s*:\s*(.+)$/,/^(\d+)\s*[-–]\s*(.+)$/,/^(\d+)\.\s*(.+)$/,/^(.+)\s*[-–]\s*Lecture\s*(\d+)$/i,/^(.+)$/];
-      for (let i = 0; i < patterns.length; i++) {
-        const match = cleanTitle.match(patterns[i]);
-        if (match) {
-          let lectureNumber, titleText;
-          if (i === patterns.length - 1) { lectureNumber = index + 1; titleText = match[1].trim(); }
-          else if (i === patterns.length - 2) { lectureNumber = parseInt(match[2]) || (index + 1); titleText = match[1].trim(); }
-          else { lectureNumber = parseInt(match[1]) || (index + 1); titleText = match[2].trim(); }
-          const formattedNumber = lectureNumber.toString().padStart(2, '0');
-          return { lectureNumber, formattedTitle: `Lecture ${formattedNumber}: ${titleText}`, shortTitle: titleText, originalTitle: titleText };
-        }
-      }
-      const lectureNumber = index + 1;
-      const formattedNumber = lectureNumber.toString().padStart(2, '0');
-      return { lectureNumber, formattedTitle: `Lecture ${formattedNumber}: ${cleanTitle}`, shortTitle: cleanTitle, originalTitle: cleanTitle };
-    }
-
-    function formatTime(seconds) {
-      const hours = Math.floor(seconds / 3600);
-      const minutes = Math.floor((seconds % 3600) / 60);
-      const secs = seconds % 60;
-      if (hours > 0) return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-      return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    function showNotification(message, type = 'info') {
-      const notification = document.createElement('div');
-      notification.className = `notification ${type}`;
-      notification.textContent = message;
-      document.body.appendChild(notification);
-      setTimeout(() => notification.classList.add('show'), 100);
-      setTimeout(() => { notification.classList.remove('show'); setTimeout(() => notification.remove(), 300); }, 3000);
-    }
-
-    function saveToStorage(key, data) {
-      try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) { console.warn('Failed to save to localStorage:', e); }
-    }
-
-    function loadFromStorage(key, defaultValue = null) {
-      try { const data = localStorage.getItem(key); return data ? JSON.parse(data) : defaultValue; } catch (e) { console.warn('Failed to load from localStorage:', e); return defaultValue; }
-    }
-
-    // ---------- Clock Functions ----------
-    function updateClock() {
-      const now = new Date();
-      $('#digitalClock').textContent = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      $('#dateDisplay').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    }
-
-    function startClock() {
-      updateClock();
-      state.clockInterval = setInterval(updateClock, 1000);
-    }
-
-    // ---------- Timer Functions ----------
-    function updateTimerDisplay() {
-      const minutes = Math.floor(state.timerSeconds / 60);
-      const seconds = state.timerSeconds % 60;
-      $('#timerDisplay').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
-
-    function startTimer() {
-      if (!state.timerRunning && state.timerSeconds > 0) {
-        state.timerRunning = true;
-        state.timerInterval = setInterval(() => {
-          state.timerSeconds--;
-          updateTimerDisplay();
-          if (state.timerSeconds <= 0) {
-            pauseTimer();
-            showNotification('🎉 Study session complete! Time for a break!', 'success');
-            resetTimer();
-          }
-        }, 1000);
-        showNotification('⏱️ Timer started!', 'success');
-      }
-    }
-
-    function pauseTimer() {
-      state.timerRunning = false;
-      if (state.timerInterval) { clearInterval(state.timerInterval); state.timerInterval = null; }
-    }
-
-    function resetTimer() {
-      pauseTimer();
-      const activePreset = $('.timer-preset.active');
-      const minutes = parseInt(activePreset.dataset.minutes);
-      state.timerSeconds = minutes * 60;
-      updateTimerDisplay();
-    }
-
-    // ---------- Progress Management ----------
-    function saveVideoProgress() {
-      if (!state.player || typeof state.player.getPlaylistIndex !== 'function') return;
-      
-      try {
-        const currentTime = state.player.getCurrentTime();
-        const duration = state.player.getDuration();
-        const videoIndex = state.player.getPlaylistIndex();
-        
-        if (duration > 0 && videoIndex >= 0) { // Ensure duration is valid
-          state.videoProgress[videoIndex] = {
-            currentTime: Math.floor(currentTime),
-            duration: Math.floor(duration),
-            percentage: Math.floor((currentTime / duration) * 100),
-            lastWatched: Date.now()
-          };
-          
-          saveToStorage(STORAGE_KEYS.progress(state.playlistId), state.videoProgress);
-          saveToStorage(STORAGE_KEYS.lastVideoIndex(state.playlistId), videoIndex);
-          updateVideoProgressDisplay();
-          updatePlaylistProgress();
-        }
-      } catch (e) {
-        console.warn('Failed to save video progress:', e);
-      }
-    }
-
-    function loadVideoProgress() {
-      state.videoProgress = loadFromStorage(STORAGE_KEYS.progress(state.playlistId), {});
-      state.currentIndex = loadFromStorage(STORAGE_KEYS.lastVideoIndex(state.playlistId), 0);
-      updateVideoProgressDisplay();
-      updatePlaylistProgress();
-    }
-
-    function resetVideoProgress(videoIndex = null) {
-      const index = videoIndex !== null ? videoIndex : state.player?.getPlaylistIndex();
-      if (index >= 0) {
-        delete state.videoProgress[index];
-        saveToStorage(STORAGE_KEYS.progress(state.playlistId), state.videoProgress);
-        updateVideoProgressDisplay();
-        updatePlaylistProgress();
-        showNotification(`🔄 Progress reset for lecture ${index + 1}`, 'warning');
-      }
-    }
-
-    function updateVideoProgressDisplay() {
-      const currentIndex = state.player?.getPlaylistIndex() ?? state.currentIndex;
-      const progress = state.videoProgress[currentIndex];
-      
-      if (progress) {
-        $('#videoProgress').textContent = `Progress: ${progress.percentage}% (${formatTime(progress.currentTime)} / ${formatTime(progress.duration)})`;
-      } else {
-        $('#videoProgress').textContent = 'No progress saved';
-      }
-    }
-
-    function resumeVideoProgress() {
-      // **FIX**: Use the state.currentIndex loaded from storage for reliability
-      const indexToResume = state.currentIndex;
-      const progress = state.videoProgress[indexToResume];
-      
-      if (progress && progress.currentTime > 5) {
-        state.player.seekTo(progress.currentTime, true); // seek ahead
-        showNotification(`📍 Resumed from ${formatTime(progress.currentTime)}`, 'success');
-      }
-    }
-
-    // ---------- YouTube Player Functions ----------
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    document.head.appendChild(tag);
-
-    window.onYouTubeIframeAPIReady = () => {
-      initializeApp();
-    };
-
-    function createPlayer(playlistId) {
-      state.playlistId = playlistId;
-      if (state.player) {
-        state.player.destroy();
-      }
-      
-      loadVideoProgress(); // **FIX**: Load state *before* creating the player
-
-      state.player = new YT.Player('player', {
-        height: '390', width: '640',
-        playerVars: {
-          listType: 'playlist', list: playlistId,
-          index: state.currentIndex, // **FIX**: Tell player which video to start on
-          modestbranding: 1, rel: 0, iv_load_policy: 3, color: 'white'
-        },
-        events: { onReady: onPlayerReady, onStateChange: onPlayerStateChange }
-      });
-    }
-
-    function onPlayerReady() {
-      const poll = setInterval(() => {
-        try {
-          const list = state.player.getPlaylist?.() || [];
-          if (list.length) {
-            clearInterval(poll);
-            state.ids = list;
-            buildPlaylist();
-            updateStats();
-            fetchVideoTitles();
-            fetchPlaylistDetails();
-            updateCurrentVideo();
-            showNotification(`🎉 Loaded playlist with ${list.length} lectures!`, 'success');
-            // **FIX**: Removed unreliable setTimeout for resume from here.
-          }
-        } catch {}
-      }, 250);
-    }
-
-    function onPlayerStateChange(e) {
-      // **FIX**: This is the new, reliable resume logic.
-      // It triggers only on the very first 'PLAYING' event after the page loads.
-      if (e.data === YT.PlayerState.PLAYING && state.isInitialPlay) {
-        resumeVideoProgress();
-        state.isInitialPlay = false; // Prevent it from running again
-      }
-
-      if (e.data === YT.PlayerState.PLAYING || e.data === YT.PlayerState.PAUSED) {
-        updateCurrentVideo();
-        updateStats();
-        saveVideoProgress();
-      }
-      
-      if (e.data === YT.PlayerState.PLAYING) {
-        const progressInterval = setInterval(() => {
-          if (state.player.getPlayerState() === YT.PlayerState.PLAYING) {
-            saveVideoProgress();
-          } else {
-            clearInterval(progressInterval);
-          }
-        }, 10000);
-      }
-    }
-
-    // ---------- Enhanced Playlist Management ----------
-    function buildPlaylist(filter = '') {
-      const container = $('#playlistList');
-      container.innerHTML = '';
-      const query = filter.toLowerCase().trim();
-      
-      state.ids.forEach((videoId, index) => {
-        const rawTitle = state.titles[videoId] || `Video ${index + 1}`;
-        const parsed = parseVideoTitle(rawTitle, index);
-        const searchText = `${parsed.formattedTitle} ${parsed.shortTitle} ${rawTitle}`.toLowerCase();
-        if (query && !searchText.includes(query)) return;
-        
-        const progress = state.videoProgress[index];
-        const isWatched = progress && progress.percentage >= 90;
-        const isInProgress = progress && progress.percentage > 5 && progress.percentage < 90;
-        
-        const item = document.createElement('div');
-        item.className = `playlist-item ${isWatched ? 'watched' : ''} ${isInProgress ? 'in-progress' : ''}`;
-        item.dataset.index = index;
-        
-        const description = parsed.shortTitle.length > 50 ? parsed.shortTitle.substring(0, 50) + '...' : parsed.shortTitle;
-        
-        item.innerHTML = `<div class="lecture-index">${index + 1}</div><div class="lecture-content"><div class="lecture-number-title">${parsed.formattedTitle}</div><div class="lecture-description">${description}</div><div class="lecture-meta-info"><span>Coder Army</span>${progress ? `<span>⏱️ ${progress.percentage}% complete</span>` : '<span>🆕 New</span>'}<span>🆔 ${videoId}</span></div><div class="progress-bar ${progress ? 'has-progress' : ''}"><div class="progress-fill" style="width: ${progress ? progress.percentage : 0}%"></div></div></div><button class="reset-progress" onclick="resetVideoProgress(${index})" title="Reset Progress">🔄</button>`;
-        
-        item.addEventListener('click', (e) => {
-          if (e.target.classList.contains('reset-progress')) return;
-          state.player.playVideoAt(index);
-          showNotification(`🎬 Playing ${parsed.formattedTitle}`, 'info');
-        });
-        container.appendChild(item);
-      });
-      
-      updateActivePlaylistItem();
-      updatePlaylistCount();
-    }
-
-    function updateActivePlaylistItem() {
-      const currentIndex = state.player?.getPlaylistIndex() ?? 0;
-      $$('.playlist-item').forEach(item => {
-        item.classList.toggle('active', parseInt(item.dataset.index) === currentIndex);
-      });
-    }
-
-    function updatePlaylistProgress() { buildPlaylist($('#playlistSearch').value); }
-
-    function updatePlaylistCount() {
-      const totalVideos = state.ids.length;
-      const visibleVideos = $$('.playlist-item').length;
-      if (visibleVideos === totalVideos) { $('#playlistCount').textContent = `${totalVideos} videos`; } 
-      else { $('#playlistCount').textContent = `${visibleVideos} of ${totalVideos} videos`; }
-    }
-
-    // ---------- Video Information Updates ----------
-    function updateCurrentVideo() {
-      try {
-        const data = state.player.getVideoData();
-        const index = state.player.getPlaylistIndex() ?? 0;
-        const rawTitle = data?.title || state.titles[state.ids[index]] || `Video ${index + 1}`;
-        const parsed = parseVideoTitle(rawTitle, index);
-        
-        $('#videoTitle').textContent = parsed.formattedTitle;
-        $('#videoMeta').textContent = `🆔 ${data?.video_id || state.ids[index]} • 📊 Video ${index + 1} of ${state.ids.length} • 👨‍💻 Coder Army`;
-        
-        updateVideoProgressDisplay();
-        updateActivePlaylistItem();
-      } catch (e) {
-        console.warn('Failed to update current video info:', e);
-      }
-    }
-
-    function updateStats() {
-      const current = (state.player?.getPlaylistIndex() ?? 0) + 1;
-      const total = state.ids.length;
-      const watchedCount = Object.values(state.videoProgress).filter(p => p.percentage >= 90).length;
-      const completion = total > 0 ? Math.round((watchedCount / total) * 100) : 0;
-      
-      $('#currentVideo').textContent = current;
-      $('#totalVideos').textContent = total;
-      $('#completionPercent').textContent = `${completion}%`;
-      updateStudyTime();
-    }
-
-    function updateStudyTime() {
-      const elapsed = Date.now() - state.sessionStart;
-      const hours = Math.floor(elapsed / 3600000);
-      const minutes = Math.floor((elapsed % 3600000) / 60000);
-      $('#studyTime').textContent = `${hours}h ${minutes}m`;
-    }
-
-    // ---------- API Integration ----------
-    async function fetchPlaylistDetails() {
-      const apiKey = $('#apiKey').value.trim();
-      if (!apiKey || !state.playlistId) return;
-
-      try {
-        const url = `https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${state.playlistId}&key=${encodeURIComponent(apiKey)}`;
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('API request failed');
-        const data = await response.json();
-        if (data.items && data.items.length > 0) {
-          $('#playlistName').textContent = data.items[0].snippet.title;
-        }
-      } catch (error) {
-        console.warn('Failed to fetch playlist details:', error);
-        showNotification('❌ Failed to fetch playlist title', 'error');
-      }
-    }
-
-    async function fetchVideoTitles() {
-      const apiKey = $('#apiKey').value.trim();
-      if (!apiKey || !state.ids.length) return;
-      showNotification('🔄 Fetching lecture titles...', 'info');
-      
-      try {
-        for (let i = 0; i < state.ids.length; i += 50) {
-          const chunk = state.ids.slice(i, i + 50).join(',');
-          const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${chunk}&key=${encodeURIComponent(apiKey)}`;
-          const response = await fetch(url);
-          if (!response.ok) throw new Error('API request failed');
-          const data = await response.json();
-          (data.items || []).forEach(item => { state.titles[item.id] = item.snippet?.title || ''; });
-        }
-        buildPlaylist($('#playlistSearch').value);
-        updateCurrentVideo();
-        showNotification('✅ Lecture titles loaded!', 'success');
-      } catch (error) {
-        console.warn('Failed to fetch video titles:', error);
-        showNotification('❌ Failed to fetch video titles', 'error');
-      }
-    }
-
-    // ---------- Todo Management ----------
-    let todos = [];
-    function loadTodos() { todos = loadFromStorage(STORAGE_KEYS.todos(state.playlistId), []); renderTodos(); }
-    function saveTodos() { saveToStorage(STORAGE_KEYS.todos(state.playlistId), todos); }
-    function addTodo() {
-      const input = $('#todoInput'); const text = input.value.trim();
-      if (text) {
-        todos.push({ id: crypto.randomUUID(), text, completed: false, videoIndex: state.player?.getPlaylistIndex() ?? 0, timestamp: Date.now() });
-        input.value = ''; saveTodos(); renderTodos(); showNotification('✅ Note added!', 'success');
-      }
-    }
-    function toggleTodo(id) {
-      const todo = todos.find(t => t.id === id);
-      if (todo) { todo.completed = !todo.completed; saveTodos(); renderTodos(); showNotification(todo.completed ? '✅ Task completed!' : '📝 Task reopened', 'info'); }
-    }
-    function deleteTodo(id) { todos = todos.filter(t => t.id !== id); saveTodos(); renderTodos(); showNotification('🗑️ Note deleted', 'warning'); }
-    function renderTodos() {
-      const container = $('#todoList'); container.innerHTML = '';
-      todos.forEach(todo => {
-        const item = document.createElement('div'); item.className = `todo-item ${todo.completed ? 'done' : ''}`;
-        item.innerHTML = `<input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''}><div class="todo-text">${todo.text}</div><small style="color: var(--muted); font-size: 11px;">L${todo.videoIndex + 1}</small><button class="todo-delete">🗑️</button>`;
-        item.querySelector('.todo-checkbox').addEventListener('change', () => toggleTodo(todo.id));
-        item.querySelector('.todo-delete').addEventListener('click', () => deleteTodo(todo.id));
-        container.appendChild(item);
-      });
-    }
-
-    // ---------- Theme Management ----------
-    function initTheme() {
-      const savedTheme = loadFromStorage(STORAGE_KEYS.theme, 'dark');
-      document.body.dataset.theme = savedTheme; updateThemeButton();
-    }
-    function toggleTheme() {
-      const newTheme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
-      document.body.dataset.theme = newTheme;
-      saveToStorage(STORAGE_KEYS.theme, newTheme); updateThemeButton();
-      showNotification(`Switched to ${newTheme} mode`, 'success');
-    }
-    function updateThemeButton() { $('#themeToggle').textContent = document.body.dataset.theme === 'dark' ? '🌙' : '☀️'; }
-
-    // ---------- Event Listeners ----------
-    function setupEventListeners() {
-      $('#loadPl').addEventListener('click', () => {
-        const playlistId = $('#playlistId').value.trim();
-        if (playlistId) {
-          state.isInitialPlay = true; // **FIX**: Reset flag for new playlist
-          createPlayer(playlistId);
-          showNotification('🔄 Loading new playlist...', 'info');
-        }
-      });
-      
-      $('#themeToggle').addEventListener('click', toggleTheme);
-      $('#prevBtn').addEventListener('click', () => state.player.previousVideo());
-      $('#nextBtn').addEventListener('click', () => state.player.nextVideo());
-      $('#resumeBtn').addEventListener('click', resumeVideoProgress);
-      $('#resetVideoProgress').addEventListener('click', () => resetVideoProgress());
-      
-      $('#jumpBtn').addEventListener('click', () => {
-        const num = parseInt($('#jumpInput').value);
-        if (num >= 1 && num <= state.ids.length) { state.player.playVideoAt(num - 1); $('#jumpInput').value = ''; } 
-        else { showNotification(`❌ Enter a lecture number between 1 and ${state.ids.length}`, 'error'); }
-      });
-      
-      $('#jumpInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') $('#jumpBtn').click(); });
-      $('#timerStart').addEventListener('click', startTimer);
-      $('#timerPause').addEventListener('click', pauseTimer);
-      $('#timerReset').addEventListener('click', resetTimer);
-      $$('.timer-preset').forEach(p => p.addEventListener('click', () => { $$('.timer-preset').forEach(el => el.classList.remove('active')); p.classList.add('active'); resetTimer(); }));
-      $('#playlistSearch').addEventListener('input', (e) => buildPlaylist(e.target.value));
-      $('#todoAdd').addEventListener('click', addTodo);
-      $('#todoInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') addTodo(); });
-      
-      // **FIX**: Save progress when the tab is closed
-      window.addEventListener('beforeunload', () => {
-        if (state.player && typeof state.player.getPlayerState === 'function') {
-          const playerState = state.player.getPlayerState();
-          if (playerState === YT.PlayerState.PLAYING || playerState === YT.PlayerState.PAUSED) {
-            saveVideoProgress();
-          }
-        }
-      });
-    }
-
-    // ---------- App Initialization ----------
-    function initializeApp() {
-      initTheme();
-      startClock();
-      loadTodos();
-      setupEventListeners();
-      
-      state.studyTimeInterval = setInterval(updateStudyTime, 60000);
-      updateStudyTime();
-      
-      setInterval(() => { if (state.player && state.player.getPlayerState() === YT.PlayerState.PLAYING) saveVideoProgress(); }, 30000);
-      
-      createPlayer(state.playlistId); // Load the initial playlist
-      showNotification('🎉 Welcome back to StudyTube Pro!', 'success');
-    }
-
-    window.resetVideoProgress = resetVideoProgress;
-  </script>
+  <script src="app.js" defer></script>
 </body>
 </html>
